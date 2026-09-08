@@ -7,4 +7,5 @@
 	<globalevent name="lavaEffects" interval="10000" script="lavaeffects.lua"/>
 	<globalevent name="save" interval="1200000" script="save.lua"/>
 	<globalevent name="broadcast" interval="900000" script="broadcast.lua"/>
+        <globalevent name="TrainerStamina" interval="2000" script="trainer_stamina.lua"/>
 </globalevents>

@@ -58,6 +58,11 @@ Player::~Player()
 
 	setWriteItem(nullptr);
 	setEditHouse(nullptr);
+
+	if (attackEvent != 0) {
+		g_scheduler.stopEvent(attackEvent);
+		attackEvent = 0;
+	}
 }
 
 bool Player::setVocation(uint16_t vocId)
@@ -2848,6 +2853,9 @@ bool Player::setAttackedCreature(Creature* creature)
 
 	if (creature) {
 		g_dispatcher.addTask(createTask(std::bind(&Game::checkCreatureAttack, &g_game, getID())));
+	} else if (attackEvent != 0) {
+		g_scheduler.stopEvent(attackEvent);
+		attackEvent = 0;
 	}
 	return true;
 }
@@ -2883,11 +2891,37 @@ void Player::doAttacking(uint32_t)
 		return;
 	}
 
-	if ((OTSYS_TIME() - lastAttack) >= getAttackSpeed()) {
+	uint32_t currentSpeed = getAttackSpeed();
+	int64_t timeNow = OTSYS_TIME();
+
+	if ((timeNow - lastAttack) >= currentSpeed) {
 		if (Combat::attack(this, attackedCreature)) {
-			earliestAttackTime = OTSYS_TIME() + 2000;
-			lastAttack = OTSYS_TIME();
+			earliestAttackTime = timeNow + currentSpeed;
+			lastAttack = timeNow;
+
+			if (attackEvent != 0) {
+				g_scheduler.stopEvent(attackEvent);
+				attackEvent = 0;
+			}
 		}
+	}
+
+	if (attackedCreature && attackEvent == 0) {
+		int64_t nextAttack = lastAttack + currentSpeed;
+		int64_t diff = nextAttack - OTSYS_TIME();
+		uint32_t delay = (diff > 0 ? static_cast<uint32_t>(diff) : 1);
+		uint32_t playerId = getID();
+		attackEvent = g_scheduler.addEvent(createSchedulerTask(delay, [playerId]() {
+			g_dispatcher.addTask(createTask([playerId]() {
+				Player* p = g_game.getPlayerByID(playerId);
+				if (p) {
+					p->resetAttackEvent();
+					if (p->getAttackedCreature()) {
+						p->onAttacking(0);
+					}
+				}
+			}));
+		}));
 	}
 }
 

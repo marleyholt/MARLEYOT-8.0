@@ -13546,22 +13546,22 @@ Attributes  = {Weight=10}
 
 TypeID		= 3036
 Name        = "a violet gem"
-Flags       = {Take}
+Flags       = {Take,MultiUse,UseEvent}
 Attributes  = {Weight=30}
 
 TypeID		= 3037
 Name        = "a yellow gem"
-Flags       = {Take}
+Flags       = {Take,MultiUse,UseEvent}
 Attributes  = {Weight=30}
 
 TypeID		= 3038
 Name        = "a green gem"
-Flags       = {Take}
+Flags       = {Take,MultiUse,UseEvent}
 Attributes  = {Weight=30}
 
 TypeID		= 3039
 Name        = "a red gem"
-Flags       = {Take}
+Flags       = {Take,MultiUse,UseEvent}
 Attributes  = {Weight=30}
 
 TypeID		= 3040
@@ -13571,7 +13571,7 @@ Attributes  = {Weight=80}
 
 TypeID		= 3041
 Name        = "a blue gem"
-Flags       = {Take}
+Flags       = {Take,MultiUse,UseEvent}
 Attributes  = {Weight=30}
 
 TypeID		= 3042

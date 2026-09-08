@@ -1,11 +1,11 @@
--- Combat settings
+# (ou onde estiver a pasta do seu servidor, ex: ~/server772/config.lua)-- Combat settings
 -- NOTE: valid values for worldType are: "pvp", "no-pvp" and "pvp-enforced"
 worldType = "pvp"
-protectionLevel = 50
-pzLocked = 60000
+protectionLevel = 8
+pzLocked = 10000
 removeChargesFromRunes = true
 stairJumpExhaustion = 0
-experienceByKillingPlayers = false
+experienceByKillingPlayers = true
 expFromPlayersLevelRange = 75
 
 -- Skull System
@@ -21,16 +21,16 @@ killsMonthBanishment = 52
 
 -- Connection Config
 -- NOTE: maxPlayers set to 0 means no limit
-ip = "127.0.0.1"
+ip = "137.131.196.66"
 bindOnlyGlobalAddress = false
 loginProtocolPort = 7171
-gameProtocolPort = 7373
-statusProtocolPort = 7272
+gameProtocolPort = 7172
+statusProtocolPort = 7171
 maxPlayers = 0
-motd = "HAPPY NEW YEAR!\n\nYurOTS."
+motd = "Bem vindo ao beta teste MarleyOT, em caso de bug envie uma mensagem pra https://discord.gg/V4yKQRC8."
 onePlayerOnlinePerAccount = true
 allowClones = false
-serverName = "YurOTS"
+serverName = "MarleyOT"
 statusTimeout = 5000
 replaceKickOnLogin = true
 maxPacketsPerSecond = 50
@@ -59,9 +59,9 @@ mapAuthor = "Yurez - Rodi"
 
 -- MySQL
 mysqlHost = "127.0.0.1"
-mysqlUser = "root"
-mysqlPass = ""
-mysqlDatabase = "yurots"
+mysqlUser = "yurots_user"
+mysqlPass = "Yurots80Secret!"
+mysqlDatabase = "yurots_db"
 mysqlPort = 3306
 mysqlSock = ""
 
@@ -71,7 +71,7 @@ freePremium = false
 kickIdlePlayerAfterMinutes = 60 * 24
 maxMessageBuffer = 4
 showMonsterLoot = true
-queryPlayerContainers = false
+queryPlayerContainers = true
 
 -- Character Rooking
 -- Level threshold is the level requirement to teleport players back to newbie town
@@ -81,11 +81,12 @@ newbieLevelThreshold = 5
 
 -- Rates
 -- NOTE: rateExp is not used if you have enabled stages in data/XML/stages.xml
+experienceStages = true
 rateExp = 1
 rateSkill = 1
 rateMagic = 1
 rateLoot = 1
-rateSpawn = 1
+rateSpawn = 2
 
 -- Monsters
 deSpawnRange = 99999
@@ -106,3 +107,16 @@ ownerName = ""
 ownerEmail = "yourEmail@gmail.com"
 url = "https://127.0.0.1/"
 location = "Canada"
+
+-- Auto Save & Player Save
+autoSave = true
+autoSaveInterval = 15 * 60 * 1000
+saveGlobalStorage = true
+savePlayerOnLogout = true
+
+-- Stamina Configuration
+staminaSystem = true
+extraRateStamina = 1.5
+staminaHoursBonus = 40
+-- 1 minuto offline (60000 ms) recupera 1 minuto de stamina
+timeToStaminaOffline = 60 * 1000

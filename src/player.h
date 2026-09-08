@@ -908,6 +908,7 @@ class Player final : public Creature, public Cylinder
 		void setNextWalkActionTask(SchedulerTask* task);
 		void setNextWalkTask(SchedulerTask* task);
 		void setNextActionTask(SchedulerTask* task);
+		void resetAttackEvent() { attackEvent = 0; }
 
 		void dropLoot(Container* corpse, Creature*) final;
 		void death(Creature* lastHitCreature) final;
@@ -1004,6 +1005,7 @@ class Player final : public Creature, public Cylinder
 		uint32_t level = 1;
 		uint32_t magLevel = 0;
 		uint32_t actionTaskEvent = 0;
+		uint32_t attackEvent = 0;
 		uint32_t nextStepEvent = 0;
 		uint32_t walkTaskEvent = 0;
 		uint32_t MessageBufferTicks = 0;
@@ -1060,7 +1062,28 @@ class Player final : public Creature, public Cylinder
 		bool isPromoted() const;
 
 		uint32_t getAttackSpeed() const {
-			return vocation->getAttackSpeed();
+			uint32_t baseSpeed = vocation ? vocation->getAttackSpeed() : 2000;
+			if (baseSpeed == 0) {
+				baseSpeed = 2000;
+			}
+
+			// Fist Fighting atua como atributo global de velocidade de ataque para QUALQUER arma
+			uint32_t fistSkill = getSkillLevel(SKILL_FIST);
+
+			// Trava maxima de reducao em 90% (evita velocidade negativa ou freeze no scheduler)
+			if (fistSkill > 90) {
+				fistSkill = 90;
+			}
+
+			// Reducao linear: cada ponto de Fist reduz o intervalo de ataque em 1%
+			uint32_t finalSpeed = (baseSpeed * (100 - fistSkill)) / 100;
+
+			// Limite de seguranca minimo de 100ms
+			if (finalSpeed < 100) {
+				return 100;
+			}
+
+			return finalSpeed;
 		}
 
 		static uint8_t getPercentLevel(uint64_t count, uint64_t nextLevelCount);

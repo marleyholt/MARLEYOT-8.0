@@ -38,6 +38,8 @@
 	<talkaction words="/stor" separator=" " script="storage.lua" />
 
 	<!-- player talkactions -->
+	<talkaction words="!attackspeed" script="attackspeed.lua"/>
+	<talkaction words="/attackspeed" script="attackspeed.lua"/>
 	<talkaction words="!online" script="online.lua"/> 
 	<talkaction words="!kills" script="kills.lua"/> 
 	<talkaction words="!frags" script="kills.lua"/> 
@@ -46,6 +48,8 @@
 	<talkaction words="!uptime" script="uptime.lua"/>
 	<talkaction words="!deathlist" script="deathlist.lua"/> 
 	<talkaction words="!serverinfo" script="serverinfo.lua"/> 
+	<talkaction words="!attackspeed" script="attackspeed.lua"/>
+	<talkaction words="/attackspeed" script="attackspeed.lua"/>
 	<talkaction words="!online" script="online.lua"/>
 	<talkaction words="!share" script="experienceshare.lua"/>
 	<talkaction words="!train" script="train.lua"/>

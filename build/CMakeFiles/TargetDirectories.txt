@@ -1,0 +1,6 @@
+/home/ubuntu/otserv/build/CMakeFiles/rebuild_cache.dir
+/home/ubuntu/otserv/build/CMakeFiles/edit_cache.dir
+/home/ubuntu/otserv/build/CMakeFiles/clean_cotire.dir
+/home/ubuntu/otserv/build/CMakeFiles/all_pch.dir
+/home/ubuntu/otserv/build/CMakeFiles/yurOTS_pch.dir
+/home/ubuntu/otserv/build/CMakeFiles/yurOTS.dir

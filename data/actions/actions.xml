@@ -2,6 +2,8 @@
 <actions>
 	<action actionid="1600" script="minibosses.lua" />
 	<action fromid="5245" toid="5249" script="gem.lua" />
+	<action fromid="3036" toid="3039" script="gem.lua" />
+	<action itemid="3041" script="gem.lua" />
 
 	<action actionid="14" script="dhlever.lua"/>
 
