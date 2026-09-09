@@ -2,7 +2,7 @@ name: Build OTCv8 Android APK
 
 on:
   push:
-    branches: [ master, main ]
+    branches: [ master, main, client-android ]
   workflow_dispatch:
 
 jobs:
