@@ -1,3 +1,5 @@
+#include <set>
+#include <vector>
 /*
  * YurOTS, a free game server emulator 
  * Official Repository on Github <https://github.com/rodolfoaugusto/yurOTS-server>
@@ -864,6 +866,50 @@ class Player final : public Creature, public Cylinder
 			}
 		}
 
+		
+void sendExtendedOpcode(uint8_t opcode, const std::string& buffer) {
+if (client) {
+client->sendExtendedOpcode(opcode, buffer);
+}
+}
+
+uint32_t getMaxAutoLootSlots() const {
+return isPremium() ? 5 : 3;
+}
+
+bool addAutoLootItem(uint16_t itemId) {
+if (autoLootItems.count(itemId) > 0) {
+return true;
+}
+if (autoLootItems.size() >= getMaxAutoLootSlots()) {
+return false;
+}
+autoLootItems.insert(itemId);
+return true;
+}
+
+bool removeAutoLootItem(uint16_t itemId) {
+return autoLootItems.erase(itemId) > 0;
+}
+
+void clearAutoLootItems() {
+autoLootItems.clear();
+}
+
+const std::set<uint16_t>& getAutoLootItems() const {
+return autoLootItems;
+}
+
+void setAutoLootGold(bool enabled) {
+autoLootGold = enabled;
+}
+
+bool isAutoLootGold() const {
+return autoLootGold;
+}
+
+void executeAutoLoot(Container* corpse);
+
 		void receivePing() {
 			lastPong = OTSYS_TIME();
 		}
@@ -993,6 +1039,8 @@ class Player final : public Creature, public Cylinder
 		Party* party = nullptr;
 		Player* tradePartner = nullptr;
 		ProtocolGame_ptr client;
+		std::set<uint16_t> autoLootItems;
+		bool autoLootGold = true;
 		SchedulerTask* walkTask = nullptr;
 		Town* town = nullptr;
 		Vocation* vocation = nullptr;

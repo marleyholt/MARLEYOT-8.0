@@ -3777,3 +3777,58 @@ void Player::setGuild(Guild* guild)
 		oldGuild->removeMember(this);
 	}
 }
+
+void Player::executeAutoLoot(Container* corpse)
+{
+if (!corpse) {
+return;
+}
+
+if (!autoLootGold && autoLootItems.empty()) {
+return;
+}
+
+std::vector<Item*> itemsToLoot;
+std::function<void(Container*)> collectLoot = [&](Container* c) {
+if (!c) {
+return;
+}
+for (Item* item : c->getItemList()) {
+if (Container* sub = item->getContainer()) {
+collectLoot(sub);
+} else {
+uint16_t id = item->getID();
+bool isGold = (id == 3031 || id == 3035 || id == 3043 || id == 2148 || id == 2152 || id == 2160);
+if ((autoLootGold && isGold) || autoLootItems.count(id) > 0) {
+itemsToLoot.push_back(item);
+}
+}
+}
+};
+
+collectLoot(corpse);
+
+for (Item* item : itemsToLoot) {
+Cylinder* fromCylinder = item->getParent();
+if (!fromCylinder) {
+continue;
+}
+
+uint32_t count = item->getItemCount();
+std::string itemName = item->getName();
+bool stackable = item->isStackable();
+
+ReturnValue ret = g_game.internalMoveItem(fromCylinder, this, INDEX_WHEREEVER, item, count, nullptr, 0, this);
+if (ret != RETURNVALUE_NOERROR) {
+g_game.internalMoveItem(fromCylinder, getTile(), INDEX_WHEREEVER, item, count, nullptr, FLAG_NOLIMIT);
+sendTextMessage(MESSAGE_STATUS_CONSOLE_BLUE, "[AutoLoot] Sem capacidade para " + itemName + "! Item caiu ao chao.");
+} else {
+std::string msg = "[AutoLoot] Coletado: " + itemName;
+if (stackable && count > 1) {
+msg += " (" + std::to_string(count) + ")";
+}
+sendTextMessage(MESSAGE_STATUS_CONSOLE_BLUE, msg);
+}
+}
+}
+

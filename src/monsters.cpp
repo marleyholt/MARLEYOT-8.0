@@ -97,23 +97,25 @@ void MonsterType::createLoot(Container* corpse)
 		g_game.internalRemoveItem(bagItem);
 	}
 
-	if (g_config.getBoolean(ConfigManager::SHOW_MONSTER_LOOT)) {
-		Player* owner = g_game.getPlayerByID(corpse->getCorpseOwner());
-		if (owner) {
-			if(owner->isPremium()){
-				std::ostringstream ss;
-				ss << "Loot of " << nameDescription << ": " << corpse->getContentDescription();
+	Player* owner = g_game.getPlayerByID(corpse->getCorpseOwner());
+if (owner) {
+if (g_config.getBoolean(ConfigManager::SHOW_MONSTER_LOOT)) {
+if (owner->isPremium()) {
+std::ostringstream ss;
+ss << "Loot of " << nameDescription << ": " << corpse->getContentDescription();
 
-				if (owner->getParty()) {
-					owner->getParty()->broadcastPartyLoot(ss.str());
-				} else {
-					owner->sendTextMessage(MESSAGE_INFO_DESCR, ss.str());
-				}
-			}
-		}
-	}
+if (owner->getParty()) {
+owner->getParty()->broadcastPartyLoot(ss.str());
+} else {
+owner->sendTextMessage(MESSAGE_INFO_DESCR, ss.str());
+}
+}
+}
 
-	corpse->startDecaying();
+owner->executeAutoLoot(corpse);
+}
+
+corpse->startDecaying();
 }
 
 std::vector<Item*> MonsterType::createLootItem(const LootBlock& lootBlock)

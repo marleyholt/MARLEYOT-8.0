@@ -58,5 +58,8 @@ player:registerEvent("kills")
 player:registerEvent("Reward")
 player:registerEvent("Spell")
 player:registerEvent("Task")
+player:registerEvent("ExtendedOpcode")
+	if AutoLoot then AutoLoot.onLogin(player) end
+
 return true
 end

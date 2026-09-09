@@ -58,4 +58,31 @@
 	<talkaction words="!z" separator=" " script="magiceffect.lua"/>
 	<talkaction words="!x" separator=" " script="animationeffect.lua"/>
 	-->
+	<talkaction words="!autoloot" separator=" " script="autoloot.lua"/>
+	<talkaction words="/autoloot" separator=" " script="autoloot.lua"/>
+<!-- Bank System -->
+<talkaction words="!bank" separator=" " script="bank.lua"/>
+<talkaction words="/bank" separator=" " script="bank.lua"/>
+<talkaction words="!balance" script="bank.lua"/>
+<talkaction words="!deposit" separator=" " script="bank.lua"/>
+<talkaction words="!depositall" script="bank.lua"/>
+<talkaction words="!withdraw" separator=" " script="bank.lua"/>
+<talkaction words="!withdrawall" script="bank.lua"/>
+<talkaction words="!transfer" separator=" " script="bank.lua"/>
+<talkaction words="!transferall" separator=" " script="bank.lua"/>
+<!-- Market Commands (Chat Market) -->
+<talkaction words="!shop" script="market_cmd.lua"/>
+<talkaction words="/shop" script="market_cmd.lua"/>
+<talkaction words="!shopsell" separator=" " script="market_cmd.lua"/>
+<talkaction words="/shopsell" separator=" " script="market_cmd.lua"/>
+<talkaction words="!shopoffers" script="market_cmd.lua"/>
+<talkaction words="!shopoffer" script="market_cmd.lua"/>
+<talkaction words="/shopoffers" script="market_cmd.lua"/>
+<talkaction words="/shopoffer" script="market_cmd.lua"/>
+<talkaction words="!shopbuy" separator=" " script="market_cmd.lua"/>
+<talkaction words="/shopbuy" separator=" " script="market_cmd.lua"/>
+<talkaction words="!shopremove" separator=" " script="market_cmd.lua"/>
+<talkaction words="/shopremove" separator=" " script="market_cmd.lua"/>
+<talkaction words="!shopcancel" separator=" " script="market_cmd.lua"/>
+<talkaction words="/shopcancel" separator=" " script="market_cmd.lua"/>
 </talkactions>

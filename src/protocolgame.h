@@ -240,6 +240,7 @@ class ProtocolGame final : public Protocol
 
 		//otclient
 		void parseExtendedOpcode(NetworkMessage& msg);
+		void sendExtendedOpcode(uint8_t opcode, const std::string& buffer);
 
 		friend class Player;
 

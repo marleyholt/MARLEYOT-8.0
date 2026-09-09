@@ -909,6 +909,15 @@ class LuaScriptInterface
 
 		static int luaPlayerGetTotalDamage(lua_State* L);
 
+static int luaPlayerSendExtendedOpcode(lua_State* L);
+static int luaPlayerGetAutoLootItems(lua_State* L);
+static int luaPlayerAddAutoLootItem(lua_State* L);
+static int luaPlayerRemoveAutoLootItem(lua_State* L);
+static int luaPlayerClearAutoLoot(lua_State* L);
+static int luaPlayerSetAutoLootGold(lua_State* L);
+static int luaPlayerIsAutoLootGold(lua_State* L);
+static int luaPlayerGetMaxAutoLootSlots(lua_State* L);
+
 		// Monster
 		static int luaMonsterCreate(lua_State* L);
 

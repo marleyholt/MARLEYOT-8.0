@@ -2047,6 +2047,15 @@ void LuaScriptInterface::registerFunctions()
 
 	registerMethod("Player", "getTotalDamage", LuaScriptInterface::luaPlayerGetTotalDamage);
 
+registerMethod("Player", "sendExtendedOpcode", LuaScriptInterface::luaPlayerSendExtendedOpcode);
+registerMethod("Player", "getAutoLootItems", LuaScriptInterface::luaPlayerGetAutoLootItems);
+registerMethod("Player", "addAutoLootItem", LuaScriptInterface::luaPlayerAddAutoLootItem);
+registerMethod("Player", "removeAutoLootItem", LuaScriptInterface::luaPlayerRemoveAutoLootItem);
+registerMethod("Player", "clearAutoLoot", LuaScriptInterface::luaPlayerClearAutoLoot);
+registerMethod("Player", "setAutoLootGold", LuaScriptInterface::luaPlayerSetAutoLootGold);
+registerMethod("Player", "isAutoLootGold", LuaScriptInterface::luaPlayerIsAutoLootGold);
+registerMethod("Player", "getMaxAutoLootSlots", LuaScriptInterface::luaPlayerGetMaxAutoLootSlots);
+
 	// Monster
 	registerClass("Monster", "Creature", LuaScriptInterface::luaMonsterCreate);
 	registerMetaMethod("Monster", "__eq", LuaScriptInterface::luaUserdataCompare);
@@ -8537,6 +8546,109 @@ int LuaScriptInterface::luaPlayerGetClient(lua_State* L)
 		lua_pushnil(L);
 	}
 	return 1;
+}
+
+
+int LuaScriptInterface::luaPlayerSendExtendedOpcode(lua_State* L)
+{
+const std::string& buffer = getString(L, 3);
+uint8_t opcode = getNumber<uint8_t>(L, 2);
+Player* player = getUserdata<Player>(L, 1);
+if (player) {
+player->sendExtendedOpcode(opcode, buffer);
+pushBoolean(L, true);
+} else {
+lua_pushnil(L);
+}
+return 1;
+}
+
+int LuaScriptInterface::luaPlayerGetAutoLootItems(lua_State* L)
+{
+Player* player = getUserdata<Player>(L, 1);
+if (!player) {
+lua_pushnil(L);
+return 1;
+}
+
+lua_newtable(L);
+int i = 1;
+for (uint16_t id : player->getAutoLootItems()) {
+lua_pushnumber(L, id);
+lua_rawseti(L, -2, i++);
+}
+return 1;
+}
+
+int LuaScriptInterface::luaPlayerAddAutoLootItem(lua_State* L)
+{
+uint16_t itemId = getNumber<uint16_t>(L, 2);
+Player* player = getUserdata<Player>(L, 1);
+if (player) {
+pushBoolean(L, player->addAutoLootItem(itemId));
+} else {
+lua_pushnil(L);
+}
+return 1;
+}
+
+int LuaScriptInterface::luaPlayerRemoveAutoLootItem(lua_State* L)
+{
+uint16_t itemId = getNumber<uint16_t>(L, 2);
+Player* player = getUserdata<Player>(L, 1);
+if (player) {
+pushBoolean(L, player->removeAutoLootItem(itemId));
+} else {
+lua_pushnil(L);
+}
+return 1;
+}
+
+int LuaScriptInterface::luaPlayerClearAutoLoot(lua_State* L)
+{
+Player* player = getUserdata<Player>(L, 1);
+if (player) {
+player->clearAutoLootItems();
+pushBoolean(L, true);
+} else {
+lua_pushnil(L);
+}
+return 1;
+}
+
+int LuaScriptInterface::luaPlayerSetAutoLootGold(lua_State* L)
+{
+bool enabled = getBoolean(L, 2);
+Player* player = getUserdata<Player>(L, 1);
+if (player) {
+player->setAutoLootGold(enabled);
+pushBoolean(L, true);
+} else {
+lua_pushnil(L);
+}
+return 1;
+}
+
+int LuaScriptInterface::luaPlayerIsAutoLootGold(lua_State* L)
+{
+Player* player = getUserdata<Player>(L, 1);
+if (player) {
+pushBoolean(L, player->isAutoLootGold());
+} else {
+lua_pushnil(L);
+}
+return 1;
+}
+
+int LuaScriptInterface::luaPlayerGetMaxAutoLootSlots(lua_State* L)
+{
+Player* player = getUserdata<Player>(L, 1);
+if (player) {
+lua_pushnumber(L, player->getMaxAutoLootSlots());
+} else {
+lua_pushnil(L);
+}
+return 1;
 }
 
 int LuaScriptInterface::luaPlayerGetHouse(lua_State* L)
