@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useServer } from '../context/ServerContext';
 import { VOCATIONS } from '../data/tibia80Data';
 import { Trophy, Crown, RefreshCw, Sparkles, Sword, Shield, Target, Zap, Fish, Axe } from 'lucide-react';
+import { CharacterProfileModal } from './CharacterProfileModal';
 
 export const HighscoresView: React.FC = () => {
   const { highscoresList, fetchHighscores, isRefreshing, isDbConnected, setIsDbModalOpen } = useServer();
   const [category, setCategory] = useState<string>('level');
   const [vocation, setVocation] = useState<string>('all');
+  const [selectedPlayer, setSelectedPlayer] = useState<any | null>(null);
 
   useEffect(() => {
     fetchHighscores(category, vocation);
@@ -202,17 +204,22 @@ export const HighscoresView: React.FC = () => {
                 </tr>
               ) : (
                 highscoresList.map((player, idx) => (
-                  <tr key={player.id || idx} className="hover:bg-[#171614] transition">
+                  <tr 
+                    key={player.id || idx} 
+                    onClick={() => setSelectedPlayer(player)}
+                    className="hover:bg-[#1f1a12] transition cursor-pointer group"
+                    title="Clique para ver o dossiê completo do personagem"
+                  >
                     <td className="py-3 px-4 text-center">
                       <div className="flex items-center justify-center">
                         {getRankBadge(idx + 1)}
                       </div>
                     </td>
                     <td className="py-3 px-4 font-semibold text-gray-100 flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-full bg-[#201d18] border border-[#8C6B1C]/40 flex items-center justify-center text-xs font-bold text-[#E0C068]">
+                      <div className="w-7 h-7 rounded-full bg-[#201d18] border border-[#8C6B1C]/40 flex items-center justify-center text-xs font-bold text-[#E0C068] group-hover:border-[#C9A227] transition">
                         {player.name.charAt(0).toUpperCase()}
                       </div>
-                      <span className="hover:text-[#C9A227] transition">{player.name}</span>
+                      <span className="text-gray-200 group-hover:text-[#C9A227] transition underline-offset-2 group-hover:underline">{player.name}</span>
                     </td>
                     <td className="py-3 px-4 text-gray-300">
                       <span className="inline-flex items-center gap-1 bg-[#1a1917] px-2 py-0.5 rounded border border-[#302c24] text-[11px]">
@@ -232,6 +239,14 @@ export const HighscoresView: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Character Profile Modal */}
+      {selectedPlayer && (
+        <CharacterProfileModal
+          playerName={selectedPlayer.name}
+          onClose={() => setSelectedPlayer(null)}
+        />
+      )}
     </div>
   );
 };

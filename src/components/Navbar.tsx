@@ -240,6 +240,20 @@ export const Navbar: React.FC = () => {
           <span className="truncate">Library</span>
         </button>
 
+        {/* 07 Last Deaths */}
+        <button
+          id="tab-deaths-btn"
+          onClick={() => { setActiveTab('portal'); setPortalSubTab('deaths'); }}
+          className={`p-3 sm:px-4 sm:py-3.5 border-r border-[rgba(255,255,255,0.08)] border-b md:border-b-0 font-mono text-xs uppercase cursor-pointer transition-all flex flex-col gap-0.5 text-left ${
+            isPortalActive('deaths')
+              ? 'bg-[#f8d40d] text-black font-bold'
+              : 'text-white/80 hover:bg-white/5 hover:text-white'
+          }`}
+        >
+          <span className={`text-[10px] ${isPortalActive('deaths') ? 'text-black/70 font-extrabold' : 'text-white/40'}`}>07</span>
+          <span className="truncate">Last Deaths</span>
+        </button>
+
         {/* GM & STAFF TABS (Slots 07-10) */}
         {isStaff && (
           <>

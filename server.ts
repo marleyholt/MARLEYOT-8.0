@@ -598,6 +598,219 @@ app.post('/api/characters/create', async (req: Request, res: Response) => {
   }
 });
 
+// 6.1 Get Character Detailed Profile from Real MySQL
+app.get('/api/characters/profile', async (req: Request, res: Response) => {
+  const charName = String(req.query.name || '').trim();
+  if (!charName) {
+    return res.status(400).json({ success: false, message: 'Nome do personagem não informado.' });
+  }
+
+  const currentPool = await initOrGetPool();
+  if (!currentPool || !dbConnected) {
+    return res.status(503).json({
+      success: false,
+      message: `Banco MySQL desconectado. Erro: ${dbLastError || 'Desconectado.'}`,
+    });
+  }
+
+  try {
+    // 1. Fetch player base data
+    const [playerRows]: any = await currentPool.query(
+      `SELECT id, name, group_id, account_id, level, vocation, health, healthmax, 
+              mana, manamax, maglevel, looktype, lookhead, lookbody, looklegs, lookfeet, 
+              sex, town_id, posx, posy, posz, lastlogin 
+       FROM players WHERE name = ? LIMIT 1`,
+      [charName]
+    );
+
+    if (playerRows.length === 0) {
+      return res.status(404).json({ success: false, message: `Personagem '${charName}' não encontrado no banco de dados.` });
+    }
+
+    const player = playerRows[0];
+
+    // 2. Fetch account info (premium, etc)
+    let account = {};
+    try {
+      const [accRows]: any = await currentPool.query(
+        'SELECT id, name, premdays, type FROM accounts WHERE id = ? LIMIT 1',
+        [player.account_id]
+      );
+      if (accRows.length > 0) account = accRows[0];
+    } catch {}
+
+    // 3. Fetch skills from player_skills or players table
+    let skills: any = {
+      maglevel: player.maglevel || 0,
+      fist: 10,
+      sword: 10,
+      axe: 10,
+      club: 10,
+      dist: 10,
+      shielding: 10,
+      fishing: 10,
+    };
+
+    try {
+      const [skillRows]: any = await currentPool.query(
+        'SELECT skillid, value FROM player_skills WHERE player_id = ?',
+        [player.id]
+      );
+      // OTServ skill ids: 0=fist, 1=club, 2=sword, 3=axe, 4=dist, 5=shield, 6=fishing
+      for (const s of skillRows) {
+        if (s.skillid === 0) skills.fist = s.value;
+        if (s.skillid === 1) skills.club = s.value;
+        if (s.skillid === 2) skills.sword = s.value;
+        if (s.skillid === 3) skills.axe = s.value;
+        if (s.skillid === 4) skills.dist = s.value;
+        if (s.skillid === 5) skills.shielding = s.value;
+        if (s.skillid === 6) skills.fishing = s.value;
+      }
+    } catch {
+      // Fallback if player_skills table has different schema
+    }
+
+    // 4. Fetch player equipment (player_items table)
+    let equipment: any[] = [];
+    try {
+      const slotNamesMap: Record<number, string> = {
+        1: 'necklace',
+        2: 'helmet',
+        3: 'backpack',
+        4: 'armor',
+        5: 'weapon',
+        6: 'shield',
+        7: 'legs',
+        8: 'boots',
+        9: 'ring',
+        10: 'ammo'
+      };
+
+      // Try flexible column selection in case schema uses item_id/slot instead of itemtype/pid
+      let itemRows: any[] = [];
+      try {
+        const [rows]: any = await currentPool.query(
+          'SELECT pid as slot_id, itemtype as item_id, count FROM player_items WHERE player_id = ? AND pid BETWEEN 1 AND 10',
+          [player.id]
+        );
+        itemRows = rows;
+      } catch {
+        try {
+          const [rows2]: any = await currentPool.query(
+            'SELECT slot as slot_id, item_id, count FROM player_items WHERE player_id = ? AND slot BETWEEN 1 AND 10',
+            [player.id]
+          );
+          itemRows = rows2;
+        } catch {
+          const [rows3]: any = await currentPool.query(
+            'SELECT * FROM player_items WHERE player_id = ?',
+            [player.id]
+          );
+          itemRows = rows3;
+        }
+      }
+
+      for (const item of itemRows) {
+        const slotId = item.slot_id !== undefined ? item.slot_id : (item.pid !== undefined ? item.pid : item.slot);
+        const itemId = item.item_id !== undefined ? item.item_id : (item.itemtype !== undefined ? item.itemtype : 0);
+        
+        if (slotId >= 1 && slotId <= 10 && itemId > 0) {
+          equipment.push({
+            slot: slotNamesMap[slotId] || `slot_${slotId}`,
+            slot_id: slotId,
+            item_id: itemId,
+            count: item.count || 1,
+            name: `Item ID ${itemId}`
+          });
+        }
+      }
+    } catch (e) {
+      console.warn('[Profile] player_items fetch error:', e);
+    }
+
+    // 5. Fetch house
+    let house = null;
+    try {
+      const [houseRows]: any = await currentPool.query(
+        'SELECT id, owner, paid, name, town FROM houses WHERE owner = ? LIMIT 1',
+        [player.id]
+      );
+      if (houseRows.length > 0) house = houseRows[0];
+    } catch {}
+
+    // 6. Fetch deaths
+    let deaths: any[] = [];
+    try {
+      const [deathRows]: any = await currentPool.query(
+        'SELECT player_id, time, level, killer FROM player_deaths WHERE player_id = ? ORDER BY time DESC LIMIT 10',
+        [player.id]
+      );
+      deaths = deathRows;
+    } catch {}
+
+    return res.json({
+      success: true,
+      character: {
+        player,
+        account,
+        skills,
+        equipment,
+        house,
+        deaths,
+      }
+    });
+  } catch (err: any) {
+    console.error('[Character Profile] Error:', err);
+    return res.status(500).json({ success: false, message: 'Erro ao buscar perfil: ' + err.message });
+  }
+});
+
+// 6.2 Get Server-wide Last Deaths
+app.get('/api/server/deaths', async (req: Request, res: Response) => {
+  const currentPool = await initOrGetPool();
+  if (!currentPool || !dbConnected) {
+    return res.status(503).json({ success: false, message: 'Banco MySQL desconectado.' });
+  }
+
+  try {
+    let deaths: any[] = [];
+    try {
+      const [rows]: any = await currentPool.query(`
+        SELECT d.player_id, d.time, d.level, d.killer, p.name as player_name 
+        FROM player_deaths d 
+        JOIN players p ON d.player_id = p.id 
+        ORDER BY d.time DESC 
+        LIMIT 30
+      `);
+      deaths = rows;
+    } catch {
+      // Fallback if joined query fails
+      try {
+        const [rows2]: any = await currentPool.query(`
+          SELECT * FROM player_deaths ORDER BY time DESC LIMIT 30
+        `);
+        for (const r of rows2) {
+          let playerName = `Player #${r.player_id}`;
+          try {
+            const [pRow]: any = await currentPool.query('SELECT name FROM players WHERE id = ?', [r.player_id]);
+            if (pRow.length > 0) playerName = pRow[0].name;
+          } catch {}
+          deaths.push({
+            player_name: playerName,
+            level: r.level || 8,
+            time: r.time || Math.floor(Date.now() / 1000),
+            killer: r.killer || 'Monster'
+          });
+        }
+      } catch {}
+    }
+
+    return res.json({ success: true, deaths });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, message: 'Erro ao buscar mortes: ' + err.message });
+  }
+});
+
 // 7. Delete Character
 app.post('/api/characters/delete', async (req: Request, res: Response) => {
   const { characterId, accountId } = req.body;

@@ -7,6 +7,7 @@ import { HighscoresView } from './HighscoresView';
 import { AccountManagerView } from './AccountManagerView';
 import { ServerHostingGuideView } from './ServerHostingGuideView';
 import { ClientDownloadView } from './ClientDownloadView';
+import { LastDeathsView } from './LastDeathsView';
 import { 
   Sparkles, 
   Shield, 
@@ -1067,6 +1068,11 @@ export const PortalTab: React.FC = () => {
       {/* VIEW: DOWNLOAD CLIENT */}
       {portalSubTab === 'download' && (
         <ClientDownloadView />
+      )}
+
+      {/* VIEW: LAST DEATHS */}
+      {portalSubTab === 'deaths' && (
+        <LastDeathsView />
       )}
 
       {/* VIEW: SERVER HOSTING GUIDE (GM ONLY) */}
