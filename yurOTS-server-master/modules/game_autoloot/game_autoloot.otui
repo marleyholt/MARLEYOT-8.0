@@ -1,0 +1,123 @@
+AutoLootItemWidget < UIWidget
+  height: 24
+  background-color: #222222
+  margin-top: 2
+
+  Label
+    id: itemName
+    anchors.left: parent.left
+    anchors.verticalCenter: parent.verticalCenter
+    margin-left: 6
+    text-auto-resize: true
+    color: #dfdfdf
+
+  Button
+    id: removeButton
+    anchors.right: parent.right
+    anchors.verticalCenter: parent.verticalCenter
+    margin-right: 4
+    width: 65
+    height: 18
+    text: Remover
+
+MainWindow
+  id: autoLootWindow
+  !text: tr('AutoLoot - MarleyOT')
+  size: 340 380
+  @onEscape: modules.game_autoloot.toggle()
+
+  CheckBox
+    id: goldCheckBox
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    !text: tr('Coletar Moedas de Ouro (Gold/Platinum/Crystal)')
+    checked: true
+    @onCheckChange: modules.game_autoloot.onToggleGold(self:isChecked())
+
+  Label
+    id: slotsLabel
+    anchors.top: goldCheckBox.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: 8
+    !text: tr('Slots: 0 / 3 (Free Account)')
+    color: #e0a020
+
+  Label
+    id: addLabel
+    anchors.top: slotsLabel.bottom
+    anchors.left: parent.left
+    margin-top: 10
+    !text: tr('Nome ou ID do Item:')
+
+  TextEdit
+    id: itemInput
+    anchors.top: addLabel.bottom
+    anchors.left: parent.left
+    anchors.right: addButton.left
+    margin-top: 4
+    margin-right: 6
+    height: 22
+
+  Button
+    id: addButton
+    anchors.top: addLabel.bottom
+    anchors.right: parent.right
+    margin-top: 4
+    width: 75
+    height: 22
+    !text: tr('Adicionar')
+    @onClick: modules.game_autoloot.onAddItem()
+
+  Label
+    id: listHeader
+    anchors.top: itemInput.bottom
+    anchors.left: parent.left
+    margin-top: 10
+    !text: tr('Itens configurados:')
+
+  ScrollablePanel
+    id: itemList
+    anchors.top: listHeader.bottom
+    anchors.left: parent.left
+    anchors.right: itemScrollBar.left
+    anchors.bottom: bottomSeparator.top
+    margin-top: 4
+    margin-bottom: 8
+    vertical-scrollbar: itemScrollBar
+    layout:
+      type: verticalBox
+
+  VerticalScrollBar
+    id: itemScrollBar
+    anchors.top: itemList.top
+    anchors.bottom: itemList.bottom
+    anchors.right: parent.right
+    step: 24
+    pixels-scroll: true
+
+  HorizontalSeparator
+    id: bottomSeparator
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: closeButton.top
+    margin-bottom: 8
+
+  Button
+    id: clearButton
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    width: 90
+    height: 22
+    !text: tr('Limpar Lista')
+    @onClick: modules.game_autoloot.onClearList()
+
+  Button
+    id: closeButton
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    width: 75
+    height: 22
+    !text: tr('Fechar')
+    @onClick: modules.game_autoloot.toggle()

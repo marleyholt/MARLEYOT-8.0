@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #111111;
+  --ink: #ffffff;
+  --accent: #f8d40d;
+  --jamaica-g: #3ea03c;
+  --jamaica-r: #da291c;
+  --grid-line: rgba(255, 255, 255, 0.08);
+}
+
+@layer base {
+  body {
+    background-color: #111111;
+    color: #ffffff;
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-image: radial-gradient(circle at 2px 2px, rgba(255, 255, 255, 0.08) 1px, transparent 0);
+    background-size: 24px 24px;
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, .font-display {
+    font-family: 'Syne', sans-serif;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  }
+
+  /* Custom subtle scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #111111;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #2a2a2a;
+    border-radius: 2px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #f8d40d;
+  }
+}
+
+.reggae-text-gradient {
+  background: linear-gradient(to right, #3ea03c, #f8d40d, #da291c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.meta-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 3px 8px;
+  border-radius: 2px;
+  width: fit-content;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.stat-card-v6 {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.25);
+  padding: 1rem;
+}
+
+.stat-val-v6 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #f8d40d;
+}
+
+.btn-jamaica {
+  background: #3ea03c;
+  color: #ffffff;
+  border: none;
+  padding: 0.65rem 1.25rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  transition: all 0.2s ease;
+}
+
+.btn-jamaica:hover {
+  background: #46b444;
+  box-shadow: 0 0 15px rgba(62, 160, 60, 0.4);
+}
+

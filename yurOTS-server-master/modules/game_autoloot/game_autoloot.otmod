@@ -1,0 +1,9 @@
+Module
+  name: game_autoloot
+  description: AutoLoot Window and Control for MarleyOT 7.72
+  author: MarleyOT
+  website: https://marleyot.duckdns.org
+  sandboxed: true
+  scripts: [ game_autoloot ]
+  @onLoad: init()
+  @onUnload: terminate()

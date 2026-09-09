@@ -1,0 +1,8 @@
+{
+  "name": "Marley OT - Yurots 7.72",
+  "description": "Portal AAC e Painel de Gestão completo para OTServer Tibia 7.72 Old School Yurots, com gerenciamento MySQL em tempo real, painel de administração GM e cliente customizado.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

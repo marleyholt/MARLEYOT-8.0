@@ -1,0 +1,29 @@
+name: Build OTCv8 Android APK
+
+on:
+  push:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup Java JDK
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '11'
+
+    - name: Setup Android SDK and NDK
+      uses: android-actions/setup-android@v2
+
+    - name: Build Android APK
+      run: |
+        echo "Iniciando build do APK do OTCv8 no GitHub Actions..."
+        cd android
+        msbuild /p:Configuration=Release /p:Platform=ARM64 otclientv8.sln
