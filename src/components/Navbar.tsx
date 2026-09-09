@@ -151,16 +151,12 @@ export const Navbar: React.FC = () => {
       </div>
 
       {/* Variation 6 Nav Grid */}
-      <nav className={`grid w-full border-t border-[rgba(255,255,255,0.08)] bg-[#0d0d0d] ${
-        isStaff 
-          ? 'grid-cols-2 sm:grid-cols-5 md:grid-cols-10' 
-          : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-6'
-      }`}>
+      <nav className="grid w-full grid-cols-4 sm:grid-cols-8 border-t border-[rgba(255,255,255,0.08)] bg-[#0d0d0d]">
         {/* 01 Portal */}
         <button
           id="tab-portal-btn"
           onClick={() => { setActiveTab('portal'); setPortalSubTab('news'); }}
-          className={`p-3 sm:px-4 sm:py-3.5 border-r border-[rgba(255,255,255,0.08)] border-b md:border-b-0 font-mono text-xs uppercase cursor-pointer transition-all flex flex-col gap-0.5 text-left ${
+          className={`p-2.5 sm:px-3 sm:py-3.5 border-r border-b border-[rgba(255,255,255,0.08)] font-mono text-xs uppercase cursor-pointer transition-all flex flex-col gap-0.5 text-left ${
             isPortalActive('news')
               ? 'bg-[#f8d40d] text-black font-bold'
               : 'text-white/80 hover:bg-white/5 hover:text-white'
@@ -174,21 +170,21 @@ export const Navbar: React.FC = () => {
         <button
           id="tab-account-btn"
           onClick={() => { setActiveTab('portal'); setPortalSubTab(currentAccount ? 'account' : 'login'); }}
-          className={`p-3 sm:px-4 sm:py-3.5 border-r border-[rgba(255,255,255,0.08)] border-b md:border-b-0 font-mono text-xs uppercase cursor-pointer transition-all flex flex-col gap-0.5 text-left ${
+          className={`p-2.5 sm:px-3 sm:py-3.5 border-r border-b border-[rgba(255,255,255,0.08)] font-mono text-xs uppercase cursor-pointer transition-all flex flex-col gap-0.5 text-left ${
             isPortalActive('account') || isPortalActive('login') || isPortalActive('register')
               ? 'bg-[#f8d40d] text-black font-bold'
               : 'text-white/80 hover:bg-white/5 hover:text-white'
           }`}
         >
           <span className={`text-[10px] ${isPortalActive('account') || isPortalActive('login') || isPortalActive('register') ? 'text-black/70 font-extrabold' : 'text-white/40'}`}>02</span>
-          <span className="truncate">{currentAccount ? 'Minha Conta' : 'Account'}</span>
+          <span className="truncate">{currentAccount ? 'Conta' : 'Account'}</span>
         </button>
 
         {/* 03 Download */}
         <button
           id="tab-download-btn"
           onClick={() => { setActiveTab('portal'); setPortalSubTab('download'); }}
-          className={`p-3 sm:px-4 sm:py-3.5 border-r border-[rgba(255,255,255,0.08)] border-b md:border-b-0 font-mono text-xs uppercase cursor-pointer transition-all flex flex-col gap-0.5 text-left ${
+          className={`p-2.5 sm:px-3 sm:py-3.5 border-r border-b border-[rgba(255,255,255,0.08)] font-mono text-xs uppercase cursor-pointer transition-all flex flex-col gap-0.5 text-left ${
             isPortalActive('download')
               ? 'bg-[#f8d40d] text-black font-bold'
               : 'text-white/80 hover:bg-white/5 hover:text-white'
@@ -202,21 +198,21 @@ export const Navbar: React.FC = () => {
         <button
           id="tab-highscores-btn"
           onClick={() => { setActiveTab('portal'); setPortalSubTab('highscores'); }}
-          className={`p-3 sm:px-4 sm:py-3.5 border-r border-[rgba(255,255,255,0.08)] border-b md:border-b-0 font-mono text-xs uppercase cursor-pointer transition-all flex flex-col gap-0.5 text-left ${
+          className={`p-2.5 sm:px-3 sm:py-3.5 border-r border-b border-[rgba(255,255,255,0.08)] font-mono text-xs uppercase cursor-pointer transition-all flex flex-col gap-0.5 text-left ${
             isPortalActive('highscores')
               ? 'bg-[#f8d40d] text-black font-bold'
               : 'text-white/80 hover:bg-white/5 hover:text-white'
           }`}
         >
           <span className={`text-[10px] ${isPortalActive('highscores') ? 'text-black/70 font-extrabold' : 'text-white/40'}`}>04</span>
-          <span className="truncate">Highscores</span>
+          <span className="truncate">Ranking</span>
         </button>
 
         {/* 05 Online */}
         <button
           id="tab-online-btn"
           onClick={() => { setActiveTab('portal'); setPortalSubTab('online'); }}
-          className={`p-3 sm:px-4 sm:py-3.5 border-r border-[rgba(255,255,255,0.08)] border-b md:border-b-0 font-mono text-xs uppercase cursor-pointer transition-all flex flex-col gap-0.5 text-left ${
+          className={`p-2.5 sm:px-3 sm:py-3.5 border-r border-b border-[rgba(255,255,255,0.08)] font-mono text-xs uppercase cursor-pointer transition-all flex flex-col gap-0.5 text-left ${
             isPortalActive('online')
               ? 'bg-[#f8d40d] text-black font-bold'
               : 'text-white/80 hover:bg-white/5 hover:text-white'
@@ -230,7 +226,7 @@ export const Navbar: React.FC = () => {
         <button
           id="tab-library-btn"
           onClick={() => { setActiveTab('portal'); setPortalSubTab('library'); }}
-          className={`p-3 sm:px-4 sm:py-3.5 border-r border-[rgba(255,255,255,0.08)] border-b md:border-b-0 font-mono text-xs uppercase cursor-pointer transition-all flex flex-col gap-0.5 text-left ${
+          className={`p-2.5 sm:px-3 sm:py-3.5 border-r border-b border-[rgba(255,255,255,0.08)] font-mono text-xs uppercase cursor-pointer transition-all flex flex-col gap-0.5 text-left ${
             isPortalActive('library')
               ? 'bg-[#f8d40d] text-black font-bold'
               : 'text-white/80 hover:bg-white/5 hover:text-white'
@@ -244,73 +240,72 @@ export const Navbar: React.FC = () => {
         <button
           id="tab-deaths-btn"
           onClick={() => { setActiveTab('portal'); setPortalSubTab('deaths'); }}
-          className={`p-3 sm:px-4 sm:py-3.5 border-r border-[rgba(255,255,255,0.08)] border-b md:border-b-0 font-mono text-xs uppercase cursor-pointer transition-all flex flex-col gap-0.5 text-left ${
+          className={`p-2.5 sm:px-3 sm:py-3.5 border-r border-b border-[rgba(255,255,255,0.08)] font-mono text-xs uppercase cursor-pointer transition-all flex flex-col gap-0.5 text-left ${
             isPortalActive('deaths')
               ? 'bg-[#f8d40d] text-black font-bold'
               : 'text-white/80 hover:bg-white/5 hover:text-white'
           }`}
         >
           <span className={`text-[10px] ${isPortalActive('deaths') ? 'text-black/70 font-extrabold' : 'text-white/40'}`}>07</span>
-          <span className="truncate">Last Deaths</span>
+          <span className="truncate">Deaths</span>
         </button>
 
-        {/* GM & STAFF TABS (Slots 07-10) */}
-        {isStaff && (
-          <>
-            <button
-              id="tab-guide-btn"
-              onClick={() => setActiveTab('guide')}
-              className={`p-3 sm:px-4 sm:py-3.5 border-r border-[rgba(255,255,255,0.08)] border-b md:border-b-0 font-mono text-xs uppercase cursor-pointer transition-all flex flex-col gap-0.5 text-left ${
-                activeTab === 'guide'
-                  ? 'bg-[#f8d40d] text-black font-bold'
-                  : 'text-amber-400/90 hover:bg-white/5 hover:text-amber-300'
-              }`}
-            >
-              <span className={`text-[10px] ${activeTab === 'guide' ? 'text-black/70 font-extrabold' : 'text-amber-500/60'}`}>07</span>
-              <span className="truncate">Guia VPS</span>
-            </button>
-
-            <button
-              id="tab-client-btn"
-              onClick={() => setActiveTab('client')}
-              className={`p-3 sm:px-4 sm:py-3.5 border-r border-[rgba(255,255,255,0.08)] border-b md:border-b-0 font-mono text-xs uppercase cursor-pointer transition-all flex flex-col gap-0.5 text-left ${
-                activeTab === 'client'
-                  ? 'bg-[#f8d40d] text-black font-bold'
-                  : 'text-amber-400/90 hover:bg-white/5 hover:text-amber-300'
-              }`}
-            >
-              <span className={`text-[10px] ${activeTab === 'client' ? 'text-black/70 font-extrabold' : 'text-amber-500/60'}`}>08</span>
-              <span className="truncate">Packager</span>
-            </button>
-
-            <button
-              id="tab-god-btn"
-              onClick={() => setActiveTab('god')}
-              className={`p-3 sm:px-4 sm:py-3.5 border-r border-[rgba(255,255,255,0.08)] border-b md:border-b-0 font-mono text-xs uppercase cursor-pointer transition-all flex flex-col gap-0.5 text-left ${
-                activeTab === 'god'
-                  ? 'bg-[#f8d40d] text-black font-bold'
-                  : 'text-amber-400/90 hover:bg-white/5 hover:text-amber-300'
-              }`}
-            >
-              <span className={`text-[10px] ${activeTab === 'god' ? 'text-black/70 font-extrabold' : 'text-amber-500/60'}`}>09</span>
-              <span className="truncate">GM / SQL</span>
-            </button>
-
-            <button
-              id="tab-script-btn"
-              onClick={() => setActiveTab('script')}
-              className={`p-3 sm:px-4 sm:py-3.5 border-r border-[rgba(255,255,255,0.08)] border-b md:border-b-0 font-mono text-xs uppercase cursor-pointer transition-all flex flex-col gap-0.5 text-left ${
-                activeTab === 'script'
-                  ? 'bg-[#f8d40d] text-black font-bold'
-                  : 'text-amber-400/90 hover:bg-white/5 hover:text-amber-300'
-              }`}
-            >
-              <span className={`text-[10px] ${activeTab === 'script' ? 'text-black/70 font-extrabold' : 'text-amber-500/60'}`}>10</span>
-              <span className="truncate">Scripts</span>
-            </button>
-          </>
-        )}
+        {/* 08 Shop */}
+        <button
+          id="tab-shop-btn"
+          onClick={() => { setActiveTab('portal'); setPortalSubTab('shop'); }}
+          className={`p-2.5 sm:px-3 sm:py-3.5 border-b border-[rgba(255,255,255,0.08)] font-mono text-xs uppercase cursor-pointer transition-all flex flex-col gap-0.5 text-left ${
+            isPortalActive('shop')
+              ? 'bg-[#f8d40d] text-black font-bold'
+              : 'text-white/80 hover:bg-white/5 hover:text-white'
+          }`}
+        >
+          <span className={`text-[10px] ${isPortalActive('shop') ? 'text-black/70 font-extrabold' : 'text-white/40'}`}>08</span>
+          <span className="truncate">Shop</span>
+        </button>
       </nav>
+
+      {/* GM & STAFF SECONDARY ROW */}
+      {isStaff && (
+        <div className="grid grid-cols-4 border-t border-[rgba(255,255,255,0.08)] bg-[#14120e]">
+          <button
+            id="tab-guide-btn"
+            onClick={() => setActiveTab('guide')}
+            className={`p-2.5 sm:px-4 sm:py-2.5 border-r border-[rgba(255,255,255,0.08)] font-mono text-xs uppercase cursor-pointer transition-all flex items-center justify-center gap-2 ${
+              activeTab === 'guide' ? 'bg-[#C9A227] text-black font-bold' : 'text-amber-400 hover:bg-white/5'
+            }`}
+          >
+            <span>👑 Guia VPS</span>
+          </button>
+          <button
+            id="tab-client-btn"
+            onClick={() => setActiveTab('client')}
+            className={`p-2.5 sm:px-4 sm:py-2.5 border-r border-[rgba(255,255,255,0.08)] font-mono text-xs uppercase cursor-pointer transition-all flex items-center justify-center gap-2 ${
+              activeTab === 'client' ? 'bg-[#C9A227] text-black font-bold' : 'text-amber-400 hover:bg-white/5'
+            }`}
+          >
+            <span>📦 Packager</span>
+          </button>
+          <button
+            id="tab-god-btn"
+            onClick={() => setActiveTab('god')}
+            className={`p-2.5 sm:px-4 sm:py-2.5 border-r border-[rgba(255,255,255,0.08)] font-mono text-xs uppercase cursor-pointer transition-all flex items-center justify-center gap-2 ${
+              activeTab === 'god' ? 'bg-[#C9A227] text-black font-bold' : 'text-amber-400 hover:bg-white/5'
+            }`}
+          >
+            <span>⚡ GM / SQL</span>
+          </button>
+          <button
+            id="tab-script-btn"
+            onClick={() => setActiveTab('script')}
+            className={`p-2.5 sm:px-4 sm:py-2.5 font-mono text-xs uppercase cursor-pointer transition-all flex items-center justify-center gap-2 ${
+              activeTab === 'script' ? 'bg-[#C9A227] text-black font-bold' : 'text-amber-400 hover:bg-white/5'
+            }`}
+          >
+            <span>📜 Scripts</span>
+          </button>
+        </div>
+      )}
     </header>
   );
 };

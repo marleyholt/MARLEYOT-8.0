@@ -5,7 +5,7 @@ import { Trophy, Crown, RefreshCw, Sparkles, Sword, Shield, Target, Zap, Fish, A
 import { CharacterProfileModal } from './CharacterProfileModal';
 
 export const HighscoresView: React.FC = () => {
-  const { highscoresList, fetchHighscores, isRefreshing, isDbConnected, setIsDbModalOpen } = useServer();
+  const { highscoresList, fetchHighscores, isRefreshing, isDbConnected, setIsDbModalOpen, isStaff } = useServer();
   const [category, setCategory] = useState<string>('level');
   const [vocation, setVocation] = useState<string>('all');
   const [selectedPlayer, setSelectedPlayer] = useState<any | null>(null);
@@ -113,14 +113,16 @@ export const HighscoresView: React.FC = () => {
             </p>
           </div>
 
-          <button
-            onClick={() => fetchHighscores(category, vocation)}
-            disabled={isRefreshing}
-            className="bg-[#241e17] hover:bg-[#332a20] text-[#E0C068] border border-[#8C6B1C]/60 hover:border-[#C9A227] px-4 py-2.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-md disabled:opacity-50 select-none cursor-pointer"
-          >
-            <RefreshCw className={`w-4 h-4 text-[#C9A227] ${isRefreshing ? 'animate-spin' : ''}`} />
-            <span>Atualizar Ranking</span>
-          </button>
+          {isStaff && (
+            <button
+              onClick={() => fetchHighscores(category, vocation)}
+              disabled={isRefreshing}
+              className="bg-[#241e17] hover:bg-[#332a20] text-[#E0C068] border border-[#8C6B1C]/60 hover:border-[#C9A227] px-4 py-2.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-md disabled:opacity-50 select-none cursor-pointer"
+            >
+              <RefreshCw className={`w-4 h-4 text-[#C9A227] ${isRefreshing ? 'animate-spin' : ''}`} />
+              <span>Atualizar Ranking</span>
+            </button>
+          )}
         </div>
       </div>
 

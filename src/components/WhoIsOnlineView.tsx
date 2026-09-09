@@ -4,7 +4,7 @@ import { VOCATIONS } from '../data/tibia80Data';
 import { Users, RefreshCw, Search, Shield, Zap, Flame, Crown, Swords, Clock } from 'lucide-react';
 
 export const WhoIsOnlineView: React.FC = () => {
-  const { onlinePlayers, onlineCount, isDbConnected, refreshAll, isRefreshing, setIsDbModalOpen, dbLastError } = useServer();
+  const { onlinePlayers, onlineCount, isDbConnected, refreshAll, isRefreshing, setIsDbModalOpen, dbLastError, isStaff } = useServer();
   const [filterVoc, setFilterVoc] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState<string>('');
 
@@ -84,15 +84,17 @@ export const WhoIsOnlineView: React.FC = () => {
               </div>
             </div>
 
-            <button
-              onClick={() => refreshAll()}
-              disabled={isRefreshing}
-              className="bg-[#241e17] hover:bg-[#332a20] text-[#E0C068] border border-[#8C6B1C]/60 hover:border-[#C9A227] px-3.5 py-3 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-md disabled:opacity-50 select-none cursor-pointer"
-              title="Atualizar lista do banco agora"
-            >
-              <RefreshCw className={`w-4 h-4 text-[#C9A227] ${isRefreshing ? 'animate-spin' : ''}`} />
-              <span className="hidden sm:inline">Atualizar</span>
-            </button>
+            {isStaff && (
+              <button
+                onClick={() => refreshAll()}
+                disabled={isRefreshing}
+                className="bg-[#241e17] hover:bg-[#332a20] text-[#E0C068] border border-[#8C6B1C]/60 hover:border-[#C9A227] px-3.5 py-3 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-md disabled:opacity-50 select-none cursor-pointer"
+                title="Atualizar lista do banco agora"
+              >
+                <RefreshCw className={`w-4 h-4 text-[#C9A227] ${isRefreshing ? 'animate-spin' : ''}`} />
+                <span className="hidden sm:inline">Atualizar</span>
+              </button>
+            )}
           </div>
         </div>
       </div>

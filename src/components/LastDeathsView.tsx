@@ -11,7 +11,7 @@ interface DeathRecord {
 }
 
 export const LastDeathsView: React.FC = () => {
-  const { isDbConnected } = useServer();
+  const { isDbConnected, isStaff } = useServer();
   const [deaths, setDeaths] = useState<DeathRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -51,14 +51,16 @@ export const LastDeathsView: React.FC = () => {
             <p className="text-xs font-mono text-gray-400">Histórico de combates e baixas recentes no servidor Marleyot 7.72</p>
           </div>
         </div>
-        <button
-          onClick={fetchDeaths}
-          disabled={loading}
-          className="px-4 py-2.5 bg-[#C9A227] hover:bg-[#b58f1f] text-black font-bold font-mono rounded-xl text-xs flex items-center gap-2 shadow-md transition cursor-pointer disabled:opacity-50"
-        >
-          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-          Atualizar Lista
-        </button>
+        {isStaff && (
+          <button
+            onClick={fetchDeaths}
+            disabled={loading}
+            className="px-4 py-2.5 bg-[#C9A227] hover:bg-[#b58f1f] text-black font-bold font-mono rounded-xl text-xs flex items-center gap-2 shadow-md transition cursor-pointer disabled:opacity-50"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            Atualizar Lista
+          </button>
+        )}
       </div>
 
       {/* Main Content Box */}
