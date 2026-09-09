@@ -2,7 +2,7 @@
 set -e
 
 echo "=================================================================="
-echo "🛡️ INSTALANDO SISTEMA DE BUY ALL BLESS E AOL (!bless / !aol)"
+echo "🛡️ INSTALANDO SISTEMA DE BLESS E AOL (!bless / !aol) - MARLEYOT"
 echo "=================================================================="
 
 # 1. Identificar o diretório do OTServ na VPS
@@ -23,20 +23,103 @@ echo "-> Diretório atual do servidor: $(pwd)"
 echo "-> [1/5] Parando o serviço otserv.service..."
 sudo systemctl stop otserv.service || true
 
-# 3. Backup de segurança
-echo "-> [2/5] Criando backup de segurança..."
-mkdir -p "$SERVER_DIR/backup_talkactions"
-cp -f data/talkactions/talkactions.xml "$SERVER_DIR/backup_talkactions/talkactions.xml.bak" 2>/dev/null || true
+# 3. Criar o script data/talkactions/scripts/bless.lua
+echo "-> [2/5] Criando data/talkactions/scripts/bless.lua..."
+mkdir -p data/talkactions/scripts
+cat << 'LUAEOF' > data/talkactions/scripts/bless.lua
+-- Sistema de Comprar Todas as Bênçãos (!bless / !buybless) - MarleyOT / YurOTS 7.72
 
-# 4. Sincronizar com o repositório (Git Pull)
-echo "-> [3/5] Atualizando arquivos do repositório (git pull)..."
-git pull origin main || echo "   [i] Atualização local via git concluída ou ignorada."
+local config = {
+	price = 50000, -- Preço total para comprar todas as 5 bênçãos (50.000 gold coins)
+	maxBlessings = 5
+}
 
-# 5. Compilar o servidor caso haja alteração em C++ (ou reiniciar diretamente se forem apenas scripts Lua)
-echo "-> [4/5] Verificando motor e scripts..."
-# Scripts Lua não exigem recompilação C++, mas rodamos cmake/make se necessário ou apenas reiniciamos.
+function onSay(player, words, param)
+	-- Verificar se o jogador já possui todas as bênçãos
+	local hasAll = true
+	for i = 1, config.maxBlessings do
+		if not player:hasBlessing(i) then
+			hasAll = false
+			break
+		end
+	end
 
-# 6. Reiniciar o serviço do OTServer
+	if hasAll then
+		player:sendTextMessage(MESSAGE_STATUS_CONSOLE_ORANGE, "Você já possui todas as 5 bênçãos ativas.")
+		player:getPosition():sendMagicEffect(CONST_ME_POFF)
+		return false
+	end
+
+	if player:removeMoney(config.price) then
+		for i = 1, config.maxBlessings do
+			if not player:hasBlessing(i) then
+				player:addBlessing(i)
+			end
+		end
+		player:sendTextMessage(MESSAGE_STATUS_CONSOLE_ORANGE, "Parabéns! Você adquiriu todas as 5 bênçãos por " .. config.price .. " gold coins.")
+		player:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
+	else
+		player:sendTextMessage(MESSAGE_STATUS_CONSOLE_ORANGE, "Você não tem dinheiro suficiente. O custo total para todas as bênçãos é de " .. config.price .. " gold coins.")
+		player:getPosition():sendMagicEffect(CONST_ME_POFF)
+	end
+	return false
+end
+LUAEOF
+
+# 4. Criar o script data/talkactions/scripts/aol.lua
+echo "-> [3/5] Criando data/talkactions/scripts/aol.lua..."
+cat << 'LUAEOF' > data/talkactions/scripts/aol.lua
+-- Sistema de Comprar 1 Amulet of Loss (!aol) - MarleyOT / YurOTS 7.72
+
+local config = {
+	price = 10000, -- Preço de 1 Amulet of Loss (10.000 gold coins)
+	itemId = 2173  -- ID do Amulet of Loss
+}
+
+function onSay(player, words, param)
+	if player:removeMoney(config.price) then
+		local item = player:addItem(config.itemId, 1)
+		if item then
+			player:sendTextMessage(MESSAGE_STATUS_CONSOLE_ORANGE, "Você comprou 1 Amulet of Loss por " .. config.price .. " gold coins.")
+			player:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
+		else
+			-- Devolver o dinheiro se a mochila estiver cheia
+			player:addMoney(config.price)
+			player:sendTextMessage(MESSAGE_STATUS_CONSOLE_ORANGE, "Sua mochila está cheia! Esvazie espaço para comprar o Amulet of Loss.")
+			player:getPosition():sendMagicEffect(CONST_ME_POFF)
+		end
+	else
+		player:sendTextMessage(MESSAGE_STATUS_CONSOLE_ORANGE, "Você não tem dinheiro suficiente. Um Amulet of Loss custa " .. config.price .. " gold coins.")
+		player:getPosition():sendMagicEffect(CONST_ME_POFF)
+	end
+	return false
+end
+LUAEOF
+
+# 5. Registrar comandos em data/talkactions/talkactions.xml
+echo "-> [4/5] Registrando comandos no talkactions.xml..."
+python3 - << 'PYEOF'
+with open("data/talkactions/talkactions.xml", "r") as f:
+    content = f.read()
+
+bless_xml = """	<!-- Bless & AOL Systems -->
+	<talkaction words="!bless" script="bless.lua"/>
+	<talkaction words="!buybless" script="bless.lua"/>
+	<talkaction words="!aol" script="aol.lua"/>
+"""
+
+if 'script="bless.lua"' not in content:
+    idx = content.rfind("</talkactions>")
+    if idx != -1:
+        content = content[:idx] + bless_xml + content[idx:]
+        with open("data/talkactions/talkactions.xml", "w") as f:
+            f.write(content)
+        print("   [+] Comandos Bless e AOL adicionados com sucesso!")
+else:
+    print("   [i] Comandos Bless e AOL já estavam registrados.")
+PYEOF
+
+# 6. Reiniciar o serviço do OTServ
 echo "-> [5/5] Reiniciando otserv.service..."
 sudo systemctl restart otserv.service
 
@@ -46,6 +129,6 @@ echo "=================================================================="
 sudo systemctl status otserv.service --no-pager -l
 echo "=================================================================="
 echo "✅ SISTEMA DE BLESS E AOL INSTALADO COM SUCESSO!"
-echo "   - Comando para comprar todas as 5 bênçãos: !bless ou !buybless (50k gps)"
-echo "   - Comando para comprar 1 Amulet of Loss: !aol (10k gps)"
+echo "   - Para comprar todas as 5 bênçãos: digite !bless ou !buybless (50.000 gps)"
+echo "   - Para comprar 1 Amulet of Loss: digite !aol (10.000 gps)"
 echo "=================================================================="
