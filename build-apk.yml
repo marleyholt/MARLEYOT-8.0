@@ -2,7 +2,7 @@ name: Build OTCv8 Android APK
 
 on:
   push:
-    branches: [ master, main ]
+    branches: [ master, main, client-android ]
   workflow_dispatch:
 
 jobs:
@@ -12,18 +12,33 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+      with:
+        submodules: recursive
 
     - name: Setup Java JDK
       uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
-        java-version: '11'
+        java-version: '17'
 
     - name: Setup Android SDK and NDK
       uses: android-actions/setup-android@v2
 
     - name: Build Android APK
       run: |
-        echo "Iniciando build do APK do OTCv8 no GitHub Actions..."
-        cd android
-        msbuild /p:Configuration=Release /p:Platform=ARM64 otclientv8.sln
+        echo "Verificando arquivos na raiz..."
+        Get-ChildItem
+        if (Test-Path "android") {
+          cd android
+          echo "Entrou na pasta android"
+          Get-ChildItem
+          if (Test-Path "gradlew.bat") {
+            .\gradlew assembleRelease
+          } else {
+            echo "gradlew.bat não encontrado na pasta android, verificando raiz..."
+          }
+        } else {
+          echo "Pasta android não encontrada!"
+          exit 1
+        }
+
