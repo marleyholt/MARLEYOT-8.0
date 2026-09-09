@@ -1,26 +1,35 @@
 -- CONFIG
-APP_NAME = "MarleyOT" -- cria a pasta %appdata%/MARLEYOT sem conflitar com outros Tibias
-APP_VERSION = 772     -- versão 8.00
-DEFAULT_LAYOUT = "retro" -- layout nostálgico clássico
+APP_NAME = "otclientv8"  -- important, change it, it's name for config dir and files in appdata
+APP_VERSION = 1341       -- client version for updater and login to identify outdated client
+DEFAULT_LAYOUT = "retro" -- on android it's forced to "mobile", check code bellow
 
--- Serviços web desativados para não dar delay de conexão
+-- If you don't use updater or other service, set it to updater = ""
 Services = {
-  website = "",
-  updater = "",
-  news = "",
+  website = "http://otclient.ovh", -- currently not used
+  updater = "http://otclient.ovh/api/updater.php",
   stats = "",
-  crash = "",
-  feedback = ""
+  crash = "http://otclient.ovh/api/crash.php",
+  feedback = "http://otclient.ovh/api/feedback.php",
+  status = "http://otclient.ovh/api/status.php"
 }
 
--- Servidores pré-configurados: O seu IP da Oracle Cloud 137.131.196.66 na porta 7171 versão 800!
+-- Servers accept http login url, websocket login url or ip:port:version
 Servers = {
-  MARLEYOT = "137.131.196.66:7171:772"
+--[[  OTClientV8 = "http://otclient.ovh/api/login.php",
+  OTClientV8proxy = "http://otclient.ovh/api/login.php?proxy=1",
+  OTClientV8c = "otclient.ovh:7171:1099:25:30:80:90",
+  OTClientV8Test = "http://otclient.ovh/api/login2.php",
+  Evoulinia = "evolunia.net:7171:1098",
+  GarneraTest = "garnera-global.net:7171:1100",
+  LocalTestServ = "127.0.0.1:7171:1098:110:30:93"  ]]
 }
-ALLOW_CUSTOM_SERVERS = false -- Trava para os jogadores não precisarem digitar nada!
--- CONFIG END
 
-g_app.setName("Marley OT")
+--Server = "ws://otclient.ovh:3000/"
+--Server = "ws://127.0.0.1:88/"
+--USE_NEW_ENERGAME = true -- uses entergamev2 based on websockets instead of entergame
+ALLOW_CUSTOM_SERVERS = true -- if true it shows option ANOTHER on server list
+
+g_app.setName("OTCv8")
 -- CONFIG END
 
 -- print first terminal message
