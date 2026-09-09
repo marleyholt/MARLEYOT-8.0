@@ -2,7 +2,7 @@ name: Build OTCv8 Android APK
 
 on:
   push:
-    branches: [ master, main, client-android ]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -26,18 +26,18 @@ jobs:
 
     - name: Build Android APK
       run: |
-        echo "Verificando arquivos na raiz..."
+        echo "Entrando na pasta client-mobile/android..."
+        cd client-mobile/android
         Get-ChildItem
-        if (Test-Path "android") {
-          cd android
-          echo "Entrou na pasta android"
-          Get-ChildItem
-          if (Test-Path "gradlew.bat") {
-            .\gradlew assembleRelease
-          } else {
-            echo "gradlew.bat não encontrado na pasta android, verificando raiz..."
-          }
+        if (Test-Path "gradlew.bat") {
+          .\gradlew assembleDebug
         } else {
-          echo "Pasta android não encontrada!"
+          echo "gradlew.bat não encontrado na pasta client-mobile/android!"
           exit 1
         }
+
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: otcv8-android-apk
+        path: client-mobile/android/app/build/outputs/apk/debug/app-debug.apk
