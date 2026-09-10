@@ -313,4 +313,5 @@
 	<action itemid="4911" script="misc/doors.lua" />
 	<action itemid="5085" script="misc/doors.lua" />
 	<action itemid="2180" script="misc/doors.lua" />
+<action itemid="6527" script="marley_coins.lua"/>
 </actions>

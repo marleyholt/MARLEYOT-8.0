@@ -1318,8 +1318,10 @@ app.post('/api/shop/buy', async (req: Request, res: Response) => {
       console.log(`[SHOP BUY DEBUG] AVISO: Inserido registro de entrega pendente no banco.`);
     }
 
+    const newBalance = currentCoins - offer.price;
     return res.json({
       success: true,
+      newCoins: newBalance,
       message: `Parabéns! Você comprou '${offer.name}' por ${offer.price} Marley Points. O item foi entregue no depot do personagem ${player.name}!`
     });
   } catch (err: any) {

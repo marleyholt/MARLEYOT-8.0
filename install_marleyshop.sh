@@ -76,7 +76,7 @@ MYSQL_USER=${MYSQL_USER:-"root"}
 MYSQL_PASS=${MYSQL_PASS:-"MARLEY22@@##"}
 MYSQL_DB=${MYSQL_DB:-"yurots_db"}
 
-mysql -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASS" "$MYSQL_DB" << 'SQLEOF'
+sudo sudo sudo mysql -h "$MYSQL_HOST" -u "$MYSQL_USER" -p"$MYSQL_PASS" "$MYSQL_DB" << 'SQLEOF'
 -- Adicionar coluna de coins na tabela accounts se não existir
 SET @dbname = DATABASE();
 SET @tablename = "accounts";

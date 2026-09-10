@@ -74,14 +74,14 @@
 	<talkaction words="!shopbuy" script="market_cmd.lua"/>
 	<talkaction words="!shopremove" script="market_cmd.lua"/>
 	<talkaction words="!shopcancel" script="market_cmd.lua"/>
+<!-- Marley Shop System -->
+<talkaction words="!points" script="marleyshop.lua"/>
+<talkaction words="/points" script="marleyshop.lua"/>
+<talkaction words="!resgatar" script="marleyshop.lua"/>
+<talkaction words="/resgatar" script="marleyshop.lua"/>
 
-	<!-- Bless & AOL Systems -->
-	<talkaction words="!bless" script="bless.lua"/>
-	<talkaction words="!buybless" script="bless.lua"/>
-	<talkaction words="!aol" script="aol.lua"/>
-
-	<!-- test talkactions 
-	<talkaction words="!z" separator=" " script="magiceffect.lua"/>
-	<talkaction words="!x" separator=" " script="animationeffect.lua"/>
-	-->
+<!-- Bless & AOL Systems -->
+<talkaction words="!bless" script="bless.lua"/>
+<talkaction words="!buybless" script="bless.lua"/>
+<talkaction words="!aol" script="aol.lua"/>
 </talkactions>
