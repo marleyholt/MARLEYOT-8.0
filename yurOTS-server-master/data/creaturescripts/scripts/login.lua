@@ -60,6 +60,7 @@ function onLogin(player)
 	player:registerEvent("Spell")
 	player:registerEvent("Task")
 	player:registerEvent("ExtendedOpcode")
+	player:registerEvent("GemCombat")
 
 	if AutoLoot then
 		AutoLoot.onLogin(player)

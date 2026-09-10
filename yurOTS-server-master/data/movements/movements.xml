@@ -465,4 +465,18 @@
 	<movevent event="Equip" itemid="3098" slot="ring" function="onEquipItem" />
 	<movevent event="Equip" itemid="3100" slot="ring" function="onEquipItem" />
 	<movevent event="DeEquip" itemid="3100" slot="ring" function="onDeEquipItem" />
+
+	<!-- Gem Equip System Movements -->
+	<movevent event="Equip" slot="head" script="gem_equip.lua"/>
+	<movevent event="DeEquip" slot="head" script="gem_equip.lua"/>
+	<movevent event="Equip" slot="armor" script="gem_equip.lua"/>
+	<movevent event="DeEquip" slot="armor" script="gem_equip.lua"/>
+	<movevent event="Equip" slot="legs" script="gem_equip.lua"/>
+	<movevent event="DeEquip" slot="legs" script="gem_equip.lua"/>
+	<movevent event="Equip" slot="feet" script="gem_equip.lua"/>
+	<movevent event="DeEquip" slot="deequip" script="gem_equip.lua"/>
+	<movevent event="Equip" slot="left" script="gem_equip.lua"/>
+	<movevent event="DeEquip" slot="deequip" script="gem_equip.lua"/>
+	<movevent event="Equip" slot="right" script="gem_equip.lua"/>
+	<movevent event="DeEquip" slot="deequip" script="gem_equip.lua"/>
 </movements>
