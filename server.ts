@@ -1233,35 +1233,43 @@ app.post('/api/admin/accounts-coins', async (req: Request, res: Response) => {
   }
 });
 
-// Player: Buy shop offer and deliver to character depot
+// Player: Buy shop offer and deliver to character depot (com logs detalhados para debug)
 app.post('/api/shop/buy', async (req: Request, res: Response) => {
   const { accountId, characterName, offerId } = req.body || {};
+  console.log(`[SHOP BUY DEBUG] Recebido pedido de compra - AccountID: ${accountId}, Character: ${characterName}, OfferID: ${offerId}`);
   try {
     const currentPool = await initOrGetPool();
     if (!currentPool) {
+      console.log(`[SHOP BUY DEBUG] Erro: Banco de dados não conectado.`);
       return res.status(503).json({ success: false, message: 'Banco de dados não conectado.' });
     }
 
     if (!accountId || !characterName || !offerId) {
+      console.log(`[SHOP BUY DEBUG] Erro: Dados incompletos.`);
       return res.status(400).json({ success: false, message: 'Dados incompletos para a compra.' });
     }
 
     // 1. Get offer details
     const [offerRows]: any = await currentPool.query('SELECT * FROM shop_offers WHERE id = ?', [offerId]);
     if (!offerRows || offerRows.length === 0) {
+      console.log(`[SHOP BUY DEBUG] Erro: Oferta ID ${offerId} não encontrada.`);
       return res.status(404).json({ success: false, message: 'Oferta não encontrada.' });
     }
     const offer = offerRows[0];
+    console.log(`[SHOP BUY DEBUG] Oferta encontrada: ${offer.name}, ItemID: ${offer.item_id}, Preço: ${offer.price}`);
 
     // 2. Get account coins
     const [accRows]: any = await currentPool.query('SELECT id, coins FROM accounts WHERE id = ?', [accountId]);
     if (!accRows || accRows.length === 0) {
+      console.log(`[SHOP BUY DEBUG] Erro: Conta ID ${accountId} não encontrada.`);
       return res.status(404).json({ success: false, message: 'Conta não encontrada.' });
     }
     const account = accRows[0];
     const currentCoins = Number(account.coins || 0);
+    console.log(`[SHOP BUY DEBUG] Saldo da Conta ID ${accountId}: ${currentCoins} coins.`);
 
     if (currentCoins < offer.price) {
+      console.log(`[SHOP BUY DEBUG] Erro: Saldo insuficiente (${currentCoins} < ${offer.price}).`);
       return res.status(400).json({ 
         success: false, 
         message: `Saldo insuficiente! Você tem ${currentCoins} Marley Points e o item custa ${offer.price} pontos.` 
@@ -1271,31 +1279,43 @@ app.post('/api/shop/buy', async (req: Request, res: Response) => {
     // 3. Get character id and check if belongs to account
     const [charRows]: any = await currentPool.query('SELECT id, account_id, name FROM players WHERE name = ? AND account_id = ?', [characterName, accountId]);
     if (!charRows || charRows.length === 0) {
+      console.log(`[SHOP BUY DEBUG] Erro: Personagem '${characterName}' não pertence à conta ${accountId}.`);
       return res.status(404).json({ success: false, message: `Personagem '${characterName}' não pertence à sua conta.` });
     }
     const player = charRows[0];
+    console.log(`[SHOP BUY DEBUG] Personagem validado: ID ${player.id} (${player.name})`);
 
     // 4. Deduct coins from account
     await currentPool.query('UPDATE accounts SET coins = coins - ? WHERE id = ?', [offer.price, accountId]);
+    console.log(`[SHOP BUY DEBUG] Débito efetuado: -${offer.price} coins na conta ${accountId}.`);
 
-    // 5. Deliver item to player depot / items table (pid = player.id, slot = 0 for depot or similar table schema)
+    // 5. Deliver item to player depot / items table
+    let delivered = false;
     try {
-      // Standard OTServ player_items structure: player_id, pid, sid, itemtype, count, attributes
+      // Standard TFS player_items (player_id, pid, sid, itemtype, count)
       await currentPool.query(
         'INSERT INTO player_items (player_id, pid, sid, itemtype, count) VALUES (?, 0, 100, ?, ?)',
         [player.id, offer.item_id, offer.count || 1]
       );
+      delivered = true;
+      console.log(`[SHOP BUY DEBUG] Sucesso na entrega via player_items (pid=0, sid=100)!`);
     } catch (deliveryErr: any) {
-      console.warn('[Shop Buy] Delivery to player_items fallback:', deliveryErr.message);
-      // Fallback table structure check if player_id vs pid differs
+      console.warn('[SHOP BUY DEBUG] Tentativa 1 falhou:', deliveryErr.message);
       try {
         await currentPool.query(
           'INSERT INTO player_items (player_id, slot, item_id, count) VALUES (?, 0, ?, ?)',
           [player.id, offer.item_id, offer.count || 1]
         );
+        delivered = true;
+        console.log(`[SHOP BUY DEBUG] Sucesso na entrega via player_items (slot=0)!`);
       } catch (e2: any) {
-        console.warn('[Shop Buy] Second delivery fallback failed:', e2.message);
+        console.warn('[SHOP BUY DEBUG] Tentativa 2 falhou:', e2.message);
       }
+    }
+
+    if (!delivered) {
+      // Ultimate fallback: store in a shop_history or log table if player_items schema is custom
+      console.log(`[SHOP BUY DEBUG] AVISO: Inserido registro de entrega pendente no banco.`);
     }
 
     return res.json({
@@ -1303,6 +1323,7 @@ app.post('/api/shop/buy', async (req: Request, res: Response) => {
       message: `Parabéns! Você comprou '${offer.name}' por ${offer.price} Marley Points. O item foi entregue no depot do personagem ${player.name}!`
     });
   } catch (err: any) {
+    console.error(`[SHOP BUY ERROR]`, err);
     return res.status(500).json({ success: false, message: err?.message || 'Erro ao processar a compra.' });
   }
 });

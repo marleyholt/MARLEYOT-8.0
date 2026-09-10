@@ -444,6 +444,21 @@ export const ShopView: React.FC = () => {
 
       {/* SHOP OFFERS CATALOG */}
       <div className="space-y-4">
+        <div className="bg-[#14120e] border border-[#8C6B1C]/50 rounded-xl p-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Coins className="w-6 h-6 text-[#C9A227]" />
+            <div>
+              <div className="text-[10px] font-mono text-gray-400 uppercase">Seu Saldo:</div>
+              <div className="text-lg font-bold font-serif text-white">
+                {currentAccount ? `${currentAccount.coins || 0} Marley Points` : 'Faça login'}
+              </div>
+            </div>
+          </div>
+          <div className="text-xs text-gray-400">
+            {currentAccount ? `Conta ID #${currentAccount.id}` : ''}
+          </div>
+        </div>
+
         <div className="flex items-center justify-between">
           <h3 className="text-xl font-bold font-serif text-white flex items-center gap-2">
             <ShoppingBag className="w-5 h-5 text-[#C9A227]" /> Catálogo de Itens Disponíveis
