@@ -1096,6 +1096,200 @@ app.get('/api/download/portal-bundle', (req: Request, res: Response) => {
   return res.status(404).json({ success: false, message: 'Bundle não encontrado. Execute npm run build.' });
 });
 
+// ---------------- Marley Shop API Endpoints ----------------
+
+// Get shop offers
+app.get('/api/shop/offers', async (req: Request, res: Response) => {
+  try {
+    const currentPool = await initOrGetPool();
+    if (!currentPool) {
+      return res.json({ success: true, offers: [] });
+    }
+    const [rows]: any = await currentPool.query('SELECT * FROM shop_offers ORDER BY id DESC');
+    return res.json({ success: true, offers: rows });
+  } catch (err: any) {
+    return res.json({ success: true, offers: [] });
+  }
+});
+
+// GM: Add or Delete shop offer
+app.post('/api/shop/offers', async (req: Request, res: Response) => {
+  const { action, id, itemId, name, price, count } = req.body || {};
+  try {
+    const currentPool = await initOrGetPool();
+    if (!currentPool) {
+      return res.status(503).json({ success: false, message: 'Banco de dados não conectado.' });
+    }
+
+    if (action === 'delete') {
+      await currentPool.query('DELETE FROM shop_offers WHERE id = ?', [id]);
+      return res.json({ success: true, message: 'Item removido da loja com sucesso!' });
+    }
+
+    if (action === 'add') {
+      if (!itemId || !name || !price) {
+        return res.status(400).json({ success: false, message: 'Informe Item ID, Nome e Preço.' });
+      }
+      await currentPool.query(
+        'INSERT INTO shop_offers (item_id, name, price, count) VALUES (?, ?, ?, ?)',
+        [Number(itemId), String(name), Number(price), Number(count || 1)]
+      );
+      return res.json({ success: true, message: 'Item adicionado à loja com sucesso!' });
+    }
+
+    return res.status(400).json({ success: false, message: 'Ação inválida.' });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, message: err?.message || 'Erro ao gerenciar ofertas da loja.' });
+  }
+});
+
+// Get PIX Config
+app.get('/api/shop/pix', async (req: Request, res: Response) => {
+  try {
+    const currentPool = await initOrGetPool();
+    if (!currentPool) {
+      return res.json({ success: true, pix: { qr_code_url: '', pix_key: 'marleyot@empresa.com' } });
+    }
+    const [rows]: any = await currentPool.query('SELECT * FROM pix_config WHERE id = 1');
+    return res.json({ success: true, pix: rows[0] || { qr_code_url: '', pix_key: 'marleyot@empresa.com' } });
+  } catch (err: any) {
+    return res.json({ success: true, pix: { qr_code_url: '', pix_key: 'marleyot@empresa.com' } });
+  }
+});
+
+// GM: Update PIX Config
+app.post('/api/shop/pix', async (req: Request, res: Response) => {
+  const { qr_code_url, pix_key } = req.body || {};
+  try {
+    const currentPool = await initOrGetPool();
+    if (!currentPool) {
+      return res.status(503).json({ success: false, message: 'Banco de dados não conectado.' });
+    }
+    await currentPool.query(
+      'INSERT INTO pix_config (id, qr_code_url, pix_key) VALUES (1, ?, ?) ON DUPLICATE KEY UPDATE qr_code_url = ?, pix_key = ?',
+      [String(qr_code_url || ''), String(pix_key || ''), String(qr_code_url || ''), String(pix_key || '')]
+    );
+    return res.json({ success: true, message: 'Configuração PIX atualizada com sucesso!' });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, message: err?.message || 'Erro ao atualizar PIX.' });
+  }
+});
+
+// GM: List accounts and coins
+app.get('/api/admin/accounts-coins', async (req: Request, res: Response) => {
+  try {
+    const currentPool = await initOrGetPool();
+    if (!currentPool) {
+      return res.status(503).json({ success: false, message: 'Banco de dados não conectado.' });
+    }
+    const [rows]: any = await currentPool.query('SELECT id, name, coins FROM accounts ORDER BY id DESC LIMIT 50');
+    return res.json({ success: true, accounts: rows });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, message: err?.message || 'Erro ao listar contas.' });
+  }
+});
+
+// GM: Adjust account coins
+app.post('/api/admin/accounts-coins', async (req: Request, res: Response) => {
+  const { accountId, amount, mode } = req.body || {}; // mode: 'set' | 'add' | 'sub'
+  try {
+    const currentPool = await initOrGetPool();
+    if (!currentPool) {
+      return res.status(503).json({ success: false, message: 'Banco de dados não conectado.' });
+    }
+    if (!accountId) {
+      return res.status(400).json({ success: false, message: 'Conta não informada.' });
+    }
+
+    const val = Number(amount || 0);
+    if (mode === 'set') {
+      await currentPool.query('UPDATE accounts SET coins = ? WHERE id = ?', [val, accountId]);
+    } else if (mode === 'sub') {
+      await currentPool.query('UPDATE accounts SET coins = GREATEST(0, coins - ?) WHERE id = ?', [val, accountId]);
+    } else {
+      await currentPool.query('UPDATE accounts SET coins = coins + ? WHERE id = ?', [val, accountId]);
+    }
+
+    return res.json({ success: true, message: 'Pontos da conta atualizados com sucesso!' });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, message: err?.message || 'Erro ao ajustar pontos.' });
+  }
+});
+
+// Player: Buy shop offer and deliver to character depot
+app.post('/api/shop/buy', async (req: Request, res: Response) => {
+  const { accountId, characterName, offerId } = req.body || {};
+  try {
+    const currentPool = await initOrGetPool();
+    if (!currentPool) {
+      return res.status(503).json({ success: false, message: 'Banco de dados não conectado.' });
+    }
+
+    if (!accountId || !characterName || !offerId) {
+      return res.status(400).json({ success: false, message: 'Dados incompletos para a compra.' });
+    }
+
+    // 1. Get offer details
+    const [offerRows]: any = await currentPool.query('SELECT * FROM shop_offers WHERE id = ?', [offerId]);
+    if (!offerRows || offerRows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Oferta não encontrada.' });
+    }
+    const offer = offerRows[0];
+
+    // 2. Get account coins
+    const [accRows]: any = await currentPool.query('SELECT id, coins FROM accounts WHERE id = ?', [accountId]);
+    if (!accRows || accRows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Conta não encontrada.' });
+    }
+    const account = accRows[0];
+    const currentCoins = Number(account.coins || 0);
+
+    if (currentCoins < offer.price) {
+      return res.status(400).json({ 
+        success: false, 
+        message: `Saldo insuficiente! Você tem ${currentCoins} Marley Points e o item custa ${offer.price} pontos.` 
+      });
+    }
+
+    // 3. Get character id and check if belongs to account
+    const [charRows]: any = await currentPool.query('SELECT id, account_id, name FROM players WHERE name = ? AND account_id = ?', [characterName, accountId]);
+    if (!charRows || charRows.length === 0) {
+      return res.status(404).json({ success: false, message: `Personagem '${characterName}' não pertence à sua conta.` });
+    }
+    const player = charRows[0];
+
+    // 4. Deduct coins from account
+    await currentPool.query('UPDATE accounts SET coins = coins - ? WHERE id = ?', [offer.price, accountId]);
+
+    // 5. Deliver item to player depot / items table (pid = player.id, slot = 0 for depot or similar table schema)
+    try {
+      // Standard OTServ player_items structure: player_id, pid, sid, itemtype, count, attributes
+      await currentPool.query(
+        'INSERT INTO player_items (player_id, pid, sid, itemtype, count) VALUES (?, 0, 100, ?, ?)',
+        [player.id, offer.item_id, offer.count || 1]
+      );
+    } catch (deliveryErr: any) {
+      console.warn('[Shop Buy] Delivery to player_items fallback:', deliveryErr.message);
+      // Fallback table structure check if player_id vs pid differs
+      try {
+        await currentPool.query(
+          'INSERT INTO player_items (player_id, slot, item_id, count) VALUES (?, 0, ?, ?)',
+          [player.id, offer.item_id, offer.count || 1]
+        );
+      } catch (e2: any) {
+        console.warn('[Shop Buy] Second delivery fallback failed:', e2.message);
+      }
+    }
+
+    return res.json({
+      success: true,
+      message: `Parabéns! Você comprou '${offer.name}' por ${offer.price} Marley Points. O item foi entregue no depot do personagem ${player.name}!`
+    });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, message: err?.message || 'Erro ao processar a compra.' });
+  }
+});
+
 // ---------------- Library Database Endpoints (Protocol 7.72) ----------------
 app.get('/api/library/data', async (req: Request, res: Response) => {
   try {

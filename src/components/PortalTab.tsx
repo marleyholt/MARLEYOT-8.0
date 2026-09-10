@@ -8,6 +8,7 @@ import { AccountManagerView } from './AccountManagerView';
 import { ServerHostingGuideView } from './ServerHostingGuideView';
 import { ClientDownloadView } from './ClientDownloadView';
 import { LastDeathsView } from './LastDeathsView';
+import { ShopView } from './ShopView';
 import { 
   Sparkles, 
   Shield, 
@@ -1060,88 +1061,9 @@ export const PortalTab: React.FC = () => {
         </div>
       )}
 
-      {/* VIEW: SHOP / TIBIA COINS */}
+      {/* VIEW: SHOP / MARLEY SHOP */}
       {portalSubTab === 'shop' && (
-        <div className="space-y-6">
-          <div className="relative overflow-hidden bg-gradient-to-r from-[#17140f] via-[#1d1913] to-[#14120e] border-2 border-[#8C6B1C]/50 p-6 sm:p-8 shadow-2xl rounded-2xl">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="space-y-2">
-                <span className="inline-flex items-center gap-1.5 bg-[#C9A227]/20 border border-[#C9A227]/40 text-[#E0C068] text-[11px] font-mono font-bold uppercase px-3 py-1 rounded-full">
-                  🪙 MarleyOT Store (Em Breve)
-                </span>
-                <h2 className="text-3xl font-bold font-serif text-white tracking-wide">
-                  Loja de Tibia Coins & VIPS
-                </h2>
-                <p className="text-sm text-gray-300 max-w-xl">
-                  Adquira Tibia Coins, dias de VIP Account, montarias exclusivas, outfits e itens lendários para impulsionar sua jornada no MarleyOT 7.72.
-                </p>
-              </div>
-              <div className="bg-[#111] border border-[#C9A227]/40 p-4 rounded-xl text-center shadow-inner">
-                <div className="text-xs text-[#C9A227] font-mono uppercase font-semibold">Status da Loja</div>
-                <div className="text-lg font-bold text-emerald-400 mt-1">Configuração Pronta</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-[#111111] border border-[#332a15] rounded-2xl p-6 shadow-xl space-y-4 hover:border-[#C9A227] transition">
-              <div className="w-12 h-12 rounded-xl bg-[#C9A227]/10 border border-[#C9A227]/30 flex items-center justify-center text-[#C9A227] font-bold text-xl">
-                💎
-              </div>
-              <h3 className="text-lg font-bold font-serif text-white">Pacote de Tibia Coins</h3>
-              <p className="text-xs text-gray-400">
-                Adicione Tibia Coins à sua conta para negociar itens no market, trocar por dias VIP ou adquirir blessings automáticas.
-              </p>
-              <div className="pt-4 border-t border-[#222] flex items-center justify-between">
-                <span className="text-sm font-mono text-[#E0C068] font-bold">A partir de R$ 10,00</span>
-                <button 
-                  onClick={() => alert('A loja será ativada em breve. Fique atento às novidades no Discord!')}
-                  className="px-4 py-2 bg-[#C9A227] hover:bg-[#b58f1f] text-black font-bold font-mono text-xs rounded-lg transition cursor-pointer"
-                >
-                  Comprar
-                </button>
-              </div>
-            </div>
-
-            <div className="bg-[#111111] border border-[#332a15] rounded-2xl p-6 shadow-xl space-y-4 hover:border-[#C9A227] transition">
-              <div className="w-12 h-12 rounded-xl bg-[#C9A227]/10 border border-[#C9A227]/30 flex items-center justify-center text-[#C9A227] font-bold text-xl">
-                👑
-              </div>
-              <h3 className="text-lg font-bold font-serif text-white">VIP Account (30 Dias)</h3>
-              <p className="text-xs text-gray-400">
-                Ganhe 20% mais XP, acesso a hunts exclusivas VIP, comandos especiais e regeneração de HP/Mana acelerada.
-              </p>
-              <div className="pt-4 border-t border-[#222] flex items-center justify-between">
-                <span className="text-sm font-mono text-[#E0C068] font-bold">R$ 25,00 / mês</span>
-                <button 
-                  onClick={() => alert('A loja será ativada em breve. Fique atento às novidades no Discord!')}
-                  className="px-4 py-2 bg-[#C9A227] hover:bg-[#b58f1f] text-black font-bold font-mono text-xs rounded-lg transition cursor-pointer"
-                >
-                  Adquirir VIP
-                </button>
-              </div>
-            </div>
-
-            <div className="bg-[#111111] border border-[#332a15] rounded-2xl p-6 shadow-xl space-y-4 hover:border-[#C9A227] transition">
-              <div className="w-12 h-12 rounded-xl bg-[#C9A227]/10 border border-[#C9A227]/30 flex items-center justify-center text-[#C9A227] font-bold text-xl">
-                🛡️
-              </div>
-              <h3 className="text-lg font-bold font-serif text-white">Blessing & Protection Pack</h3>
-              <p className="text-xs text-gray-400">
-                Proteção completa contra perda de itens e experiência em caso de morte para seus personagens.
-              </p>
-              <div className="pt-4 border-t border-[#222] flex items-center justify-between">
-                <span className="text-sm font-mono text-[#E0C068] font-bold">150 Tibia Coins</span>
-                <button 
-                  onClick={() => alert('A loja será ativada em breve. Fique atento às novidades no Discord!')}
-                  className="px-4 py-2 bg-[#C9A227] hover:bg-[#b58f1f] text-black font-bold font-mono text-xs rounded-lg transition cursor-pointer"
-                >
-                  Resgatar
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ShopView />
       )}
 
       {/* VIEW: HIGHSCORES / RANKINGS */}
