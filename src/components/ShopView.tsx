@@ -361,16 +361,18 @@ export const ShopView: React.FC = () => {
               </div>
               <div className="space-y-2">
                 <div>
-                  <label className="text-[10px] font-mono text-gray-400">Conta ID / Nome:</label>
+                  <label className="text-[10px] font-mono text-gray-400">Conta / Personagem:</label>
                   <select 
                     value={targetAccountId} 
                     onChange={e => setTargetAccountId(e.target.value)}
                     className="w-full bg-[#17140f] border border-[#332a15] text-xs font-mono text-white p-2 rounded-lg outline-none focus:border-[#C9A227]"
                     required
                   >
-                    <option value="">Selecione a Conta...</option>
+                    <option value="">Selecione a Conta / Personagem...</option>
                     {gmAccounts.map(acc => (
-                      <option key={acc.id} value={acc.id}>ID {acc.id} - {acc.name} ({acc.coins || 0} pts)</option>
+                      <option key={acc.id} value={acc.id}>
+                        Conta ID {acc.id} ({acc.coins || 0} pts) - Pgs: {acc.characters || 'Nenhum'}
+                      </option>
                     ))}
                   </select>
                 </div>

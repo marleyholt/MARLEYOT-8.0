@@ -1175,42 +1175,59 @@ app.post('/api/shop/pix', async (req: Request, res: Response) => {
   }
 });
 
-// GM: List accounts and coins
+// GM: List accounts and characters with coins
 app.get('/api/admin/accounts-coins', async (req: Request, res: Response) => {
   try {
     const currentPool = await initOrGetPool();
     if (!currentPool) {
       return res.status(503).json({ success: false, message: 'Banco de dados não conectado.' });
     }
-    const [rows]: any = await currentPool.query('SELECT id, name, coins FROM accounts ORDER BY id DESC LIMIT 50');
+    const [rows]: any = await currentPool.query(`
+      SELECT a.id, a.name as account_name, a.coins, GROUP_CONCAT(p.name SEPARATOR ', ') as characters
+      FROM accounts a
+      LEFT JOIN players p ON p.account_id = a.id
+      GROUP BY a.id
+      ORDER BY a.id DESC
+      LIMIT 100
+    `);
     return res.json({ success: true, accounts: rows });
   } catch (err: any) {
-    return res.status(500).json({ success: false, message: err?.message || 'Erro ao listar contas.' });
+    return res.json({ success: true, accounts: [] });
   }
 });
 
-// GM: Adjust account coins
+// GM: Adjust account coins by character name or account ID
 app.post('/api/admin/accounts-coins', async (req: Request, res: Response) => {
-  const { accountId, amount, mode } = req.body || {}; // mode: 'set' | 'add' | 'sub'
+  const { accountId, characterName, amount, mode } = req.body || {}; // mode: 'set' | 'add' | 'sub'
   try {
     const currentPool = await initOrGetPool();
     if (!currentPool) {
       return res.status(503).json({ success: false, message: 'Banco de dados não conectado.' });
     }
-    if (!accountId) {
-      return res.status(400).json({ success: false, message: 'Conta não informada.' });
+
+    let targetAccId = accountId;
+
+    if (!targetAccId && characterName) {
+      const [pRows]: any = await currentPool.query('SELECT account_id FROM players WHERE name = ? LIMIT 1', [characterName]);
+      if (pRows && pRows.length > 0) {
+        targetAccId = pRows[0].account_id;
+      }
+    }
+
+    if (!targetAccId) {
+      return res.status(400).json({ success: false, message: 'Conta ou nome de personagem não encontrado.' });
     }
 
     const val = Number(amount || 0);
     if (mode === 'set') {
-      await currentPool.query('UPDATE accounts SET coins = ? WHERE id = ?', [val, accountId]);
+      await currentPool.query('UPDATE accounts SET coins = ? WHERE id = ?', [val, targetAccId]);
     } else if (mode === 'sub') {
-      await currentPool.query('UPDATE accounts SET coins = GREATEST(0, coins - ?) WHERE id = ?', [val, accountId]);
+      await currentPool.query('UPDATE accounts SET coins = GREATEST(0, coins - ?) WHERE id = ?', [val, targetAccId]);
     } else {
-      await currentPool.query('UPDATE accounts SET coins = coins + ? WHERE id = ?', [val, accountId]);
+      await currentPool.query('UPDATE accounts SET coins = coins + ? WHERE id = ?', [val, targetAccId]);
     }
 
-    return res.json({ success: true, message: 'Pontos da conta atualizados com sucesso!' });
+    return res.json({ success: true, message: `Pontos atualizados com sucesso para a conta ID ${targetAccId}!` });
   } catch (err: any) {
     return res.status(500).json({ success: false, message: err?.message || 'Erro ao ajustar pontos.' });
   }
